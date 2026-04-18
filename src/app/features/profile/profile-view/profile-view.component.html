@@ -1,0 +1,144 @@
+<div class="profile-layout" *ngIf="user">
+  
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="header-content">
+      <button mat-icon-button routerLink="/dashboard" class="back-btn">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h1 class="header-title">Account Settings</h1>
+    </div>
+  </div>
+
+  <div class="profile-container">
+    
+    <!-- Left Sidebar: Profile Summary -->
+    <div class="profile-sidebar">
+      <mat-card class="sidebar-card glass">
+        <div class="avatar-box">
+          <div *ngIf="!getHeaderAvatarUrl()" class="initials-avatar" 
+               [style.background]="'hsl(' + (user.id * 47 % 360) + ',60%,50%)'">
+            {{ getInitials() }}
+          </div>
+          <img *ngIf="getHeaderAvatarUrl()" [src]="getHeaderAvatarUrl()" 
+               class="real-avatar" alt="Avatar">
+          <div class="avatar-overlay">
+            <mat-icon>photo_camera</mat-icon>
+          </div>
+        </div>
+        
+        <div class="user-meta">
+          <h2 class="u-name">{{ user.fullName }}</h2>
+          <p class="u-username">{{"@"}}{{ user.username }}</p>
+          <div class="u-badge">{{ user.role }}</div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div class="sidebar-info">
+          <div class="info-item">
+            <mat-icon>email</mat-icon>
+            <span>{{ user.email }}</span>
+          </div>
+          <div class="info-item">
+            <mat-icon>event</mat-icon>
+            <span>Joined {{ user.createdAt | date:'MMM yyyy' }}</span>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+
+    <!-- Main Content: Forms -->
+    <div class="profile-main">
+      
+      <!-- Edit Profile Section -->
+      <section class="config-section glass">
+        <div class="section-header">
+          <mat-icon>person_outline</mat-icon>
+          <h3>Personal Information</h3>
+        </div>
+        <p class="section-desc">Update your personal details and how others see you.</p>
+
+        <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
+          <div class="form-grid">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>Full Name</mat-label>
+              <input matInput formControlName="fullname" />
+              <mat-icon matPrefix>badge</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>Username</mat-label>
+              <input matInput formControlName="username" />
+              <mat-icon matPrefix>alternate_email</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width" floatLabel="always">
+            <mat-label>Avatar URL</mat-label>
+            <input matInput formControlName="avatarUrl" placeholder="https://example.com/photo.jpg" />
+            <mat-icon matPrefix>link</mat-icon>
+            <mat-hint>Direct link to an image (jpg, png)</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width" floatLabel="always">
+            <mat-label>Bio</mat-label>
+            <textarea matInput formControlName="bio" rows="3" placeholder="Tell us a bit about yourself..."></textarea>
+            <mat-icon matPrefix>notes</mat-icon>
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button mat-flat-button color="primary" type="submit" 
+                    [disabled]="savingProfile || !hasProfileChanges()">
+              <mat-spinner *ngIf="savingProfile" diameter="20"></mat-spinner>
+              {{ savingProfile ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Security Section -->
+      <section class="config-section glass">
+        <div class="section-header">
+          <mat-icon>security</mat-icon>
+          <h3>Security & Password</h3>
+        </div>
+        <p class="section-desc">Change your password to keep your account secure.</p>
+
+        <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="security-form">
+          <div class="form-grid">
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>Current Password</mat-label>
+              <input matInput [type]="hideOld ? 'password' : 'text'" formControlName="oldPassword" />
+              <button mat-icon-button matSuffix (click)="hideOld = !hideOld" type="button">
+                <mat-icon>{{ hideOld ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" floatLabel="always">
+              <mat-label>New Password</mat-label>
+              <input matInput [type]="hideNew ? 'password' : 'text'" formControlName="newPassword" />
+              <button mat-icon-button matSuffix (click)="hideNew = !hideNew" type="button">
+                <mat-icon>{{ hideNew ? 'visibility_off' : 'visibility' }}</mat-icon>
+              </button>
+            </mat-form-field>
+          </div>
+
+          <div class="form-actions">
+            <button mat-flat-button color="warn" type="submit" [disabled]="savingPassword || passwordForm.invalid">
+              <mat-spinner *ngIf="savingPassword" diameter="20"></mat-spinner>
+              {{ savingPassword ? 'Updating...' : 'Update Password' }}
+            </button>
+          </div>
+        </form>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Full Page Loading -->
+  <div class="loading-overlay" *ngIf="loading">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading your profile...</p>
+  </div>
+</div>

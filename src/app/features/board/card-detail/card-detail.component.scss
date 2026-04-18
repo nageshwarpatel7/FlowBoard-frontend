@@ -1,0 +1,60 @@
+.card-modal-container {
+  max-height: 90vh;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+
+  &::-webkit-scrollbar { width: 8px; }
+  &::-webkit-scrollbar-track { background: #f8fafc; }
+  &::-webkit-scrollbar-thumb {
+    background: #e2e8f0;
+    border-radius: 99px;
+    border: 2px solid #f8fafc;
+    &:hover { background: #cbd5e1; }
+  }
+}
+
+::ng-deep {
+  .mat-mdc-checkbox {
+    .mdc-checkbox__native-control:enabled:checked ~ .mdc-checkbox__background {
+      background-color: var(--primary) !important;
+      border-color: var(--primary) !important;
+    }
+  }
+
+  .mat-mdc-progress-bar {
+    --mdc-linear-progress-active-indicator-color: #6366f1;
+    --mdc-linear-progress-track-color: #e2e8f0;
+  }
+}
+
+.comment-list {
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    bottom: 20px;
+    width: 2px;
+    background: #f1f5f9;
+    z-index: 0;
+  }
+}
+
+.comment-item {
+  position: relative;
+  z-index: 1;
+}
+
+section {
+  position: relative;
+}
+
+.animate-in {
+  animation: modal-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modal-enter {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
