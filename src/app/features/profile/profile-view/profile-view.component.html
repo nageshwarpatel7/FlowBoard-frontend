@@ -61,31 +61,39 @@
 
         <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="profile-form">
           <div class="form-grid">
-            <mat-form-field appearance="outline" floatLabel="always">
-              <mat-label>Full Name</mat-label>
-              <input matInput formControlName="fullname" />
-              <mat-icon matPrefix>badge</mat-icon>
-            </mat-form-field>
+            <div class="form-group">
+              <label class="custom-label">Full Name</label>
+              <mat-form-field appearance="outline">
+                <input matInput formControlName="fullname" placeholder="Alice Smith" />
+                <mat-icon matPrefix>badge</mat-icon>
+              </mat-form-field>
+            </div>
 
-            <mat-form-field appearance="outline" floatLabel="always">
-              <mat-label>Username</mat-label>
-              <input matInput formControlName="username" />
-              <mat-icon matPrefix>alternate_email</mat-icon>
+            <div class="form-group">
+              <label class="custom-label">Username</label>
+              <mat-form-field appearance="outline">
+                <input matInput formControlName="username" placeholder="alicesmith" />
+                <mat-icon matPrefix>alternate_email</mat-icon>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="custom-label">Avatar URL</label>
+            <mat-form-field appearance="outline" class="full-width">
+              <input matInput formControlName="avatarUrl" placeholder="https://example.com/photo.jpg" />
+              <mat-icon matPrefix>link</mat-icon>
+              <mat-hint>Direct link to an image (jpg, png)</mat-hint>
             </mat-form-field>
           </div>
 
-          <mat-form-field appearance="outline" class="full-width" floatLabel="always">
-            <mat-label>Avatar URL</mat-label>
-            <input matInput formControlName="avatarUrl" placeholder="https://example.com/photo.jpg" />
-            <mat-icon matPrefix>link</mat-icon>
-            <mat-hint>Direct link to an image (jpg, png)</mat-hint>
-          </mat-form-field>
-
-          <mat-form-field appearance="outline" class="full-width" floatLabel="always">
-            <mat-label>Bio</mat-label>
-            <textarea matInput formControlName="bio" rows="3" placeholder="Tell us a bit about yourself..."></textarea>
-            <mat-icon matPrefix>notes</mat-icon>
-          </mat-form-field>
+          <div class="form-group">
+            <label class="custom-label">Bio</label>
+            <mat-form-field appearance="outline" class="full-width">
+              <textarea matInput formControlName="bio" rows="3" placeholder="Tell us a bit about yourself..."></textarea>
+              <mat-icon matPrefix>notes</mat-icon>
+            </mat-form-field>
+          </div>
 
           <div class="form-actions">
             <button mat-flat-button color="primary" type="submit" 
@@ -107,21 +115,25 @@
 
         <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="security-form">
           <div class="form-grid">
-            <mat-form-field appearance="outline" floatLabel="always">
-              <mat-label>Current Password</mat-label>
-              <input matInput [type]="hideOld ? 'password' : 'text'" formControlName="oldPassword" />
-              <button mat-icon-button matSuffix (click)="hideOld = !hideOld" type="button">
-                <mat-icon>{{ hideOld ? 'visibility_off' : 'visibility' }}</mat-icon>
-              </button>
-            </mat-form-field>
+            <div class="form-group">
+              <label class="custom-label">Current Password</label>
+              <mat-form-field appearance="outline">
+                <input matInput [type]="hideOld ? 'password' : 'text'" formControlName="oldPassword" placeholder="Enter current password" />
+                <button mat-icon-button matSuffix (click)="hideOld = !hideOld" type="button">
+                  <mat-icon>{{ hideOld ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
 
-            <mat-form-field appearance="outline" floatLabel="always">
-              <mat-label>New Password</mat-label>
-              <input matInput [type]="hideNew ? 'password' : 'text'" formControlName="newPassword" />
-              <button mat-icon-button matSuffix (click)="hideNew = !hideNew" type="button">
-                <mat-icon>{{ hideNew ? 'visibility_off' : 'visibility' }}</mat-icon>
-              </button>
-            </mat-form-field>
+            <div class="form-group">
+              <label class="custom-label">New Password</label>
+              <mat-form-field appearance="outline">
+                <input matInput [type]="hideNew ? 'password' : 'text'" formControlName="newPassword" placeholder="Enter new password" />
+                <button mat-icon-button matSuffix (click)="hideNew = !hideNew" type="button">
+                  <mat-icon>{{ hideNew ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+              </mat-form-field>
+            </div>
           </div>
 
           <div class="form-actions">

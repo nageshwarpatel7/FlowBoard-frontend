@@ -1,74 +1,74 @@
-<div class="main-layout-container flex flex-col h-screen overflow-hidden bg-slate-50">
-  
-  <!-- GLOBAL HEADER -->
-  <header class="header flex items-center justify-between px-6 h-16 bg-white border-b border-slate-200 z-50">
-    
-    <div class="header-left flex items-center gap-8">
-      <a routerLink="/dashboard" class="logo flex items-center gap-2 no-underline">
-        <div class="logo-icon w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-black italic">F</div>
-        <span class="logo-text text-xl font-black text-slate-800 tracking-tight">FlowBoard</span>
-      </a>
+<div class="main-layout">
 
-      <!-- GLOBAL SEARCH (Placeholder) -->
-      <div class="search-wrapper relative hidden md:block">
-        <mat-icon class="absolute left-3 top-2 text-slate-400 text-sm">search</mat-icon>
-        <input type="text" 
-               placeholder="Search boards, tasks..." 
-               class="pl-10 pr-4 py-2 w-64 bg-slate-100 border-none rounded-xl text-xs font-medium focus:ring-2 focus:ring-indigo-500 focus:bg-white outline-none transition-all" />
+  <!-- GLOBAL HEADER -->
+  <header class="app-header">
+    <div class="header-left">
+      <a routerLink="/dashboard" class="logo">
+        <div class="logo-icon">F</div>
+        <span class="logo-text">FlowBoard</span>
+      </a>
+      <div class="search-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" placeholder="Search boards, cards..." class="search-input" />
       </div>
     </div>
 
-    <div class="header-right flex items-center gap-4">
-      
-      <!-- NOTIFICATION CENTER -->
+    <div class="header-right">
+      <!-- Upgrade CTA for free users -->
+      <a *ngIf="isFreeUser()" routerLink="/pricing" class="upgrade-pill">
+        <mat-icon>workspace_premium</mat-icon>
+        <span>Upgrade</span>
+      </a>
+
+      <!-- Current plan badge for paid users -->
+      <a *ngIf="!isFreeUser()" routerLink="/pricing" class="plan-badge">
+        <mat-icon>workspace_premium</mat-icon>
+        <span class="hidden sm:inline">{{ planName() }}</span>
+      </a>
+
       <app-notification-center></app-notification-center>
 
-      <!-- HELP (Placeholder) -->
-      <button mat-icon-button class="text-slate-400" matTooltip="Help & Support">
-        <mat-icon>help_outline</mat-icon>
-      </button>
-
-      <!-- DARK MODE TOGGLE -->
-      <button mat-icon-button class="text-slate-400" matTooltip="Toggle Dark Mode" (click)="toggleTheme()">
+      <button mat-icon-button class="icon-btn" matTooltip="Toggle Dark Mode" (click)="toggleTheme()">
         <mat-icon>{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
       </button>
 
-      <mat-divider vertical class="h-6 mx-2"></mat-divider>
-
-      <!-- USER PROFILE MENU -->
-      <button mat-button [matMenuTriggerFor]="userMenu" class="profile-btn flex items-center gap-2 p-1 pl-2 rounded-xl hover:bg-slate-50">
-        <div class="user-avatar w-8 h-8 rounded-lg bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold shadow-md">
-          {{ (user$ | async)?.fullName?.[0] || 'U' }}
+      <!-- USER MENU -->
+      <button mat-button [matMenuTriggerFor]="userMenu" class="profile-btn">
+        <div class="avatar" [style.background]="(user$ | async)?.avatarUrl ? 'url(' + (user$ | async)!.avatarUrl + ') center/cover' : ''">
+          {{ (user$ | async)?.avatarUrl ? '' : ((user$ | async)?.fullName?.[0] || 'U') }}
         </div>
-        <span class="hidden sm:block text-xs font-bold text-slate-700">{{ (user$ | async)?.fullName || 'User' }}</span>
-        <mat-icon class="text-slate-400 text-sm">expand_more</mat-icon>
+        <span class="user-name">{{ (user$ | async)?.fullName || 'User' }}</span>
+        <mat-icon class="chevron">expand_more</mat-icon>
       </button>
 
-      <mat-menu #userMenu="matMenu" class="modern-profile-menu">
-        <div class="px-4 py-3 border-b">
-          <p class="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Signed in as</p>
-          <p class="text-xs font-bold text-slate-900 truncate">{{ (user$ | async)?.email }}</p>
+      <mat-menu #userMenu="matMenu">
+        <div class="menu-header">
+          <p class="menu-label">Signed in as</p>
+          <p class="menu-email">{{ (user$ | async)?.email }}</p>
+          <p class="menu-plan" [ngClass]="{'plan-pro': !isFreeUser()}">
+            {{ planName() }} Plan
+          </p>
         </div>
         <button mat-menu-item routerLink="/profile">
-          <mat-icon class="text-slate-500">person_outline</mat-icon>
-          <span class="text-xs font-medium">My Profile</span>
+          <mat-icon>person_outline</mat-icon> My Profile
+        </button>
+        <button mat-menu-item routerLink="/pricing">
+          <mat-icon>workspace_premium</mat-icon> 
+          {{ isFreeUser() ? 'Upgrade Plan' : 'Manage Subscription' }}
         </button>
         <button mat-menu-item *ngIf="authService.isAdmin()" routerLink="/admin">
-          <mat-icon class="text-indigo-600">admin_panel_settings</mat-icon>
-          <span class="text-xs font-medium text-indigo-600">Admin Dashboard</span>
+          <mat-icon>admin_panel_settings</mat-icon> Admin Dashboard
         </button>
         <mat-divider></mat-divider>
-        <button mat-menu-item (click)="logout()" class="logout-item">
-          <mat-icon class="text-red-500">logout</mat-icon>
-          <span class="text-xs font-medium text-red-500">Sign Out</span>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon> Sign Out
         </button>
       </mat-menu>
-
     </div>
   </header>
 
   <!-- PAGE CONTENT -->
-  <main class="page-body relative flex-1 overflow-hidden">
+  <main class="page-body">
     <router-outlet></router-outlet>
   </main>
 

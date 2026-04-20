@@ -1,6 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable, Subject } from 'rxjs';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -16,7 +15,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../../core/services/auth.service';
 import { WorkspaceService } from '../../../core/services/workspace.service';
-import { NotificationService } from '../../../core/services/notification.service';
+import { PaymentService } from '../../../core/services/payment.service';
 import { Workspace } from '../../../core/models/workspace.model';
 import { UserProfile } from '../../../core/models/user.model';
 import { ColorPickerComponent } from '../../../shared/components/color-picker/color-picker.component';
@@ -26,30 +25,37 @@ import { ColorPickerComponent } from '../../../shared/components/color-picker/co
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule, RouterModule,
-    MatCardModule, MatButtonModule, MatIconModule,
-    MatFormFieldModule, MatInputModule, MatSelectModule,
-    MatMenuModule, MatDividerModule, MatProgressSpinnerModule,
-    MatSnackBarModule, MatTooltipModule, ColorPickerComponent
+    MatCardModule, MatButtonModule, MatIconModule, MatFormFieldModule,
+    MatInputModule, MatSelectModule, MatMenuModule, MatDividerModule,
+    MatProgressSpinnerModule, MatSnackBarModule, MatTooltipModule, ColorPickerComponent
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss'
 })
 export class DashboardComponent implements OnInit {
-
   private fb               = inject(FormBuilder);
   private auth             = inject(AuthService);
   private workspaceService = inject(WorkspaceService);
-  private notifService     = inject(NotificationService);
+  readonly paymentService  = inject(PaymentService);
   public  router           = inject(Router);
   private snack            = inject(MatSnackBar);
 
-  workspaces: Workspace[]   = [];
+  workspaces: Workspace[] = [];
   currentUser: UserProfile | null = null;
-  loading       = true;
-  creating      = false;
+  loading = true;
+  creating = false;
   showCreateForm = false;
-  showNotifDropdown = false;
-  unreadCount   = 0;
+  showLimitBanner = false;
+
+  get canCreate(): boolean {
+    return this.paymentService.canCreateWorkspace(this.workspaces.length);
+  }
+
+  get isPaidUser(): boolean { return this.paymentService.isPaidPlan(); }
+
+  get planLabel(): string {
+    return (this.paymentService.currentPlan()?.planDisplayName ?? 'Free') + ' Plan';
+  }
 
   createForm = this.fb.group({
     name:        ['', [Validators.required, Validators.minLength(2)]],
@@ -59,87 +65,62 @@ export class DashboardComponent implements OnInit {
 
   get name() { return this.createForm.get('name')!; }
 
-  ngOnInit(): void {
+  ngOnInit() {
+    this.paymentService.getSubscription().subscribe();
     this.auth.getProfile().subscribe({
-      next: user => {
-        this.currentUser = user;
-        this.loadWorkspaces(user.id);
-      },
+      next: u => { this.currentUser = u; this.loadWorkspaces(u.id); },
       error: () => this.auth.logout()
     });
-    this.notifService.unreadCount$.subscribe(
-      (c: number) => this.unreadCount = c);
-    this.notifService.refreshUnreadCount();
   }
 
-  loadWorkspaces(userId: number): void {
+  loadWorkspaces(userId: number) {
     this.loading = true;
     this.workspaceService.getByMember(userId).subscribe({
       next: ws => { this.workspaces = ws; this.loading = false; },
-      error: ()  => {
-        this.loading = false;
-        this.snack.open('Failed to load workspaces', 'Close',
-          { duration: 3000 });
-      }
+      error: () => { this.loading = false; this.snack.open('Failed to load workspaces', 'Close', { duration: 3000 }); }
     });
   }
 
-  createWorkspace(): void {
+  tryCreateWorkspace() {
+    if (!this.canCreate) {
+      this.showLimitBanner = true;
+      setTimeout(() => this.showLimitBanner = false, 6000);
+      return;
+    }
+    this.showCreateForm = true;
+  }
+
+  createWorkspace() {
     if (this.createForm.invalid) return;
     this.creating = true;
-
-    this.workspaceService.create(this.createForm.value as any)
-      .subscribe({
-        next: ws => {
-          this.workspaces.unshift(ws);
-          this.creating = false;
-          this.showCreateForm = false;
-          this.createForm.reset({ visibility: 'PRIVATE' });
-          this.snack.open('Workspace created!', 'Close',
-            { duration: 3000 });
-        },
-        error: err => {
-          this.creating = false;
-          this.snack.open(
-            err.error?.message ?? 'Create failed',
-            'Close', { duration: 4000 });
-        }
-      });
-  }
-
-  openWorkspace(id: number): void {
-    this.router.navigate(['/workspace', id]);
-  }
-
-  deleteWorkspace(id: number, e: Event): void {
-    e.stopPropagation();
-    if (!confirm('Delete this workspace?')) return;
-
-    this.workspaceService.delete(id).subscribe({
-      next: () => {
-        this.workspaces = this.workspaces.filter(w => w.id !== id);
-        this.snack.open('Workspace deleted', 'Close',
-          { duration: 3000 });
+    this.workspaceService.create(this.createForm.value as any).subscribe({
+      next: ws => {
+        this.workspaces.unshift(ws);
+        this.creating = false; this.showCreateForm = false;
+        this.createForm.reset({ visibility: 'PRIVATE' });
+        this.snack.open('Workspace created!', 'Close', { duration: 3000 });
+      },
+      error: err => {
+        this.creating = false;
+        this.snack.open(err.error?.message ?? 'Create failed', 'Close', { duration: 4000 });
       }
     });
   }
 
-  getInitials(name: string): string {
-    return name.split(' ')
-      .map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  openWorkspace(id: number) { this.router.navigate(['/workspace', id]); }
+
+  deleteWorkspace(id: number, e: Event) {
+    e.stopPropagation();
+    if (!confirm('Delete this workspace?')) return;
+    this.workspaceService.delete(id).subscribe({
+      next: () => { this.workspaces = this.workspaces.filter(w => w.id !== id); this.snack.open('Deleted', 'Close', { duration: 2000 }); }
+    });
   }
 
-  logout(): void { this.auth.logout(); }
-
-  getWorkspaceColor(wsId: number): string | null {
-    return localStorage.getItem(`ws-color-${wsId}`);
-  }
-
-  setWorkspaceColor(wsId: number, color: string | null) {
-    if (color) {
-      localStorage.setItem(`ws-color-${wsId}`, color);
-    } else {
-      localStorage.removeItem(`ws-color-${wsId}`);
-    }
+  getInitials(name: string) { return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2); }
+  logout() { this.auth.logout(); }
+  getWorkspaceColor(id: number): string | null { return localStorage.getItem(`ws-color-${id}`); }
+  setWorkspaceColor(id: number, color: string | null) {
+    color ? localStorage.setItem(`ws-color-${id}`, color) : localStorage.removeItem(`ws-color-${id}`);
   }
 }

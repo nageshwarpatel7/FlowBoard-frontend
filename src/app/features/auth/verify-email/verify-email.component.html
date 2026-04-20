@@ -23,8 +23,8 @@
     </div>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="otp-form">
+      <label class="custom-label">Verification Code</label>
       <mat-form-field appearance="outline" class="otp-input">
-        <mat-label>Verification Code</mat-label>
         <input matInput formControlName="otp" 
                placeholder="000000" maxlength="6"
                autocomplete="one-time-code" />

@@ -1,7 +1,10 @@
+import { UserProfile } from './user.model';
+
 export interface WorkspaceMember {
   userId: number;
   role: 'ADMIN' | 'MEMBER';
   joinedAt: string;
+  user?: UserProfile;
 }
 
 export interface Workspace {

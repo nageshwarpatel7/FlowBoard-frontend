@@ -66,25 +66,31 @@
       <div *ngIf="showCreateBoard" class="create-board-form glass">
         <h3>Create a board</h3>
         <form [formGroup]="boardForm" (ngSubmit)="createBoard()">
-          <div class="form-row-2">
-            <mat-form-field appearance="outline" class="flex-1">
-              <mat-label>Board name</mat-label>
-              <input matInput formControlName="name" placeholder="Sprint Board" />
-            </mat-form-field>
+          <div class="form-row">
+            <div class="flex-1">
+              <label class="custom-label">Board name<span style="color:red">*</span></label>
+              <mat-form-field appearance="outline" class="full-width">
+                <input matInput formControlName="name" placeholder="Sprint Board" />
+              </mat-form-field>
+            </div>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Visibility</mat-label>
-              <mat-select formControlName="visibility">
-                <mat-option value="PRIVATE">Private</mat-option>
-                <mat-option value="PUBLIC">Public</mat-option>
-              </mat-select>
-            </mat-form-field>
+            <div>
+              <label class="custom-label">Visibility<span style="color:red">*</span></label>
+              <mat-form-field appearance="outline">
+                <mat-select formControlName="visibility">
+                  <mat-option value="PRIVATE">Private</mat-option>
+                  <mat-option value="PUBLIC">Public</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
           </div>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Description (optional)</mat-label>
-            <textarea matInput formControlName="description" rows="2"></textarea>
-          </mat-form-field>
+          <div>
+            <label class="custom-label">Description (optional)</label>
+            <mat-form-field appearance="outline" class="full-width">
+              <textarea matInput formControlName="description" rows="2"></textarea>
+            </mat-form-field>
+          </div>
 
           <div class="form-row-2 align-center">
             <div class="color-picker-group">
@@ -159,7 +165,7 @@
             <form [formGroup]="inviteForm" (ngSubmit)="inviteMember()" class="invite-form">
               <mat-form-field appearance="outline" class="full-width">
                 <mat-label>Email address</mat-label>
-                <input matInput formControlName="email" placeholder="colleague@example.com" />
+                <input matInput formControlName="email" placeholder="colleague&#64;example.com" />
                 <mat-icon matPrefix>mail</mat-icon>
               </mat-form-field>
               
@@ -188,11 +194,11 @@
             <div class="member-list">
               <div *ngFor="let member of workspace?.members" class="member-item">
                 <div class="member-avatar" 
-                     [style.background]="'hsl(' + (member.userId * 67 % 360) + ',60%,50%)'">
-                  {{ member.userId }}
+                     [style.background]="member.user?.avatarUrl ? 'url(' + member.user?.avatarUrl + ') center/cover' : 'hsl(' + (member.userId * 67 % 360) + ',60%,50%)'">
+                  {{ member.user?.avatarUrl ? '' : (member.user?.fullName ? member.user!.fullName[0] : member.userId) }}
                 </div>
                 <div class="member-info">
-                  <p class="member-name">User #{{ member.userId }}</p>
+                  <p class="member-name">{{ member.user?.fullName || ('User #' + member.userId) }}</p>
                   <span class="member-role" [class.owner]="member.userId === workspace?.ownerId">
                     {{ member.userId === workspace?.ownerId ? 'OWNER' : member.role }}
                   </span>

@@ -1,4 +1,6 @@
+@use './app/shared/styles-responsive.scss';
 @use '@angular/material' as mat;
+
 
 @tailwind base;
 @tailwind components;
@@ -236,9 +238,23 @@ html, body {
 }
 
 /* ── Material overrides ────────────────────── */
+.custom-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  margin-top: 4px;
+}
+
+.form-group {
+  margin-bottom: 4px;
+  width: 100%;
+}
+
 .mat-mdc-form-field {
   width: 100%;
-  margin-bottom: 8px;
+  margin-bottom: 0px;
 }
 
 .mdc-text-field--outlined {

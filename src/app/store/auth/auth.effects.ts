@@ -30,12 +30,29 @@ export class AuthEffects {
       tap(({ response }) => {
         if (response.token) {
           localStorage.setItem('token', response.token);
+
+          const payload = this.decodePayload(response.token);
+          if(payload?.userId){
+            localStorage.setItem('userId', String(payload.userId));
+          }
+          if(payload?.role){
+            localStorage.setItem('userRole', payload.role);
+          }
         }
-        this.router.navigate(['/profile']); // As requested previously
+        this.router.navigate(['/dashboard']); 
       }),
       map(() => AuthActions.getProfile())
     )
   );
+
+  private decodePayload(token: string): any{
+    try{
+      return JSON.parse(atob(token.split('.')[1]))
+    }
+    catch{
+      return null;
+    }
+  }
 
   getProfile$ = createEffect(() =>
     this.actions$.pipe(

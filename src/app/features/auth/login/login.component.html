@@ -8,8 +8,8 @@
       <span class="logo-text">FlowBoard</span>
     </div>
 
-    <h1 class="auth-title">Welcome back</h1>
-    <p class="auth-subtitle">Sign in to your workspace</p>
+    <h1 class="auth-title">Sign in to your workspace</h1>
+
 
     <div *ngIf="errorMessage" class="auth-error">
       <mat-icon style="font-size:16px;width:16px;height:16px">error</mat-icon>
@@ -18,10 +18,10 @@
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
+      <label class="custom-label">Email address</label>
       <mat-form-field appearance="outline">
-        <mat-label>Email address</mat-label>
         <input matInput formControlName="email"
-               type="email" placeholder="you@example.com" />
+               type="email" placeholder="you&#64;example.com" />
         <mat-error *ngIf="email.hasError('required')">
           Email is required
         </mat-error>
@@ -30,10 +30,10 @@
         </mat-error>
       </mat-form-field>
 
+      <label class="custom-label">Password</label>
       <mat-form-field appearance="outline">
-        <mat-label>Password</mat-label>
         <input matInput formControlName="password"
-               [type]="hidePassword ? 'password' : 'text'" />
+               [type]="hidePassword ? 'password' : 'text'" placeholder="Enter your password" />
         <button mat-icon-button matSuffix type="button"
                 (click)="hidePassword = !hidePassword">
           <mat-icon>

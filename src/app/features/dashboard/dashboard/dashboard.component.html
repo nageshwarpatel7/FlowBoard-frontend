@@ -1,16 +1,27 @@
 <div class="dashboard-layout">
-  
 
   <main class="dashboard-content">
-    
+
     <div class="page-header">
       <div>
         <h1 class="page-title">Hey, {{ currentUser?.fullName }}!</h1>
-        <p class="page-subtitle">Welcome back to your workspace dashboard.</p>
+        <p class="page-subtitle">Welcome back · <span class="plan-tag" [class.paid]="isPaidUser">{{ planLabel }}</span></p>
       </div>
-      <button mat-flat-button class="create-btn" (click)="showCreateForm = !showCreateForm">
-        <mat-icon>add</mat-icon> Create Workspace
-      </button>
+      <div class="header-actions">
+        <button mat-flat-button class="create-btn" (click)="tryCreateWorkspace()" [disabled]="!canCreate">
+          <mat-icon>add</mat-icon> <span>New Workspace</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Upgrade banner for free users hitting limits -->
+    <div *ngIf="showLimitBanner" class="limit-banner">
+      <mat-icon>workspace_premium</mat-icon>
+      <div>
+        <p class="limit-title">Workspace limit reached</p>
+        <p class="limit-desc">Free plan allows 3 workspaces. Upgrade to Pro for unlimited.</p>
+      </div>
+      <a routerLink="/pricing" mat-flat-button class="upgrade-btn">Upgrade to Pro</a>
     </div>
 
     <!-- Create Workspace Form -->
@@ -18,23 +29,29 @@
       <h3 class="form-title">New Workspace</h3>
       <form [formGroup]="createForm" (ngSubmit)="createWorkspace()">
         <div class="form-row">
-          <mat-form-field appearance="outline" class="flex-1">
-            <mat-label>Workspace Name</mat-label>
-            <input matInput formControlName="name" placeholder="Engineering Team" />
-            <mat-error *ngIf="name.hasError('required')">Name is required</mat-error>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Visibility</mat-label>
-            <mat-select formControlName="visibility">
-              <mat-option value="PRIVATE">Private</mat-option>
-              <mat-option value="PUBLIC">Public</mat-option>
-            </mat-select>
+          <div class="flex-1">
+            <label class="custom-label">Name <span class="req">*</span></label>
+            <mat-form-field appearance="outline" class="full-width">
+              <input matInput formControlName="name" placeholder="Engineering Team" />
+              <mat-error *ngIf="name.hasError('required')">Name is required</mat-error>
+            </mat-form-field>
+          </div>
+          <div>
+            <label class="custom-label">Visibility <span class="req">*</span></label>
+            <mat-form-field appearance="outline">
+              <mat-select formControlName="visibility">
+                <mat-option value="PRIVATE">Private</mat-option>
+                <mat-option value="PUBLIC">Public</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div>
+          <label class="custom-label">Description (Optional)</label>
+          <mat-form-field appearance="outline" class="full-width">
+            <textarea matInput formControlName="description" rows="2"></textarea>
           </mat-form-field>
         </div>
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Description (Optional)</mat-label>
-          <textarea matInput formControlName="description" rows="2"></textarea>
-        </mat-form-field>
         <div class="form-actions">
           <button mat-button type="button" (click)="showCreateForm = false">Cancel</button>
           <button mat-flat-button color="primary" type="submit" [disabled]="creating || createForm.invalid">
@@ -44,13 +61,18 @@
       </form>
     </div>
 
-    <!-- Loading State -->
     <div *ngIf="loading" class="loading-state">
-      <mat-spinner diameter="48"></mat-spinner>
-      <p>Fetching your workspaces...</p>
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading workspaces...</p>
     </div>
 
-    <!-- Workspaces Grid -->
+    <div *ngIf="!loading && workspaces.length === 0" class="empty-state">
+      <mat-icon>dashboard</mat-icon>
+      <h3>No workspaces yet</h3>
+      <p>Create your first workspace to start managing projects</p>
+      <button mat-flat-button color="primary" (click)="tryCreateWorkspace()">Create Workspace</button>
+    </div>
+
     <div *ngIf="!loading" class="workspace-grid">
       <div *ngFor="let ws of workspaces" class="workspace-card" (click)="openWorkspace(ws.id)">
         <div class="card-header">
@@ -69,45 +91,18 @@
             <mat-icon>more_vert</mat-icon>
           </button>
         </div>
-
-        <p class="ws-desc">{{ ws.description || 'No description provided for this workspace.' }}</p>
-
-        <div class="card-footer">
-          <div class="members-row">
-            <div *ngFor="let member of ws.members.slice(0, 3)" 
-                 class="member-dot" 
-                 [style.background]="'hsl(' + (member.userId * 67 % 360) + ',60%,55%)'"
-                 [matTooltip]="'User #' + member.userId">
-              {{ member.userId }}
-            </div>
-            <span class="more-members" *ngIf="ws.members.length > 3">
-              +{{ ws.members.length - 3 }} more
-            </span>
-          </div>
-          <span class="member-count">{{ ws.members.length }} members</span>
+        <p class="ws-desc">{{ ws.description || 'No description.' }}</p>
+        <div class="ws-footer">
+          <span class="member-count"><mat-icon>group</mat-icon> {{ ws.members?.length || 0 }} members</span>
+          <span class="ws-date">{{ ws.createdAt | date:'MMM d' }}</span>
         </div>
-        
         <mat-menu #wsMenu="matMenu">
-          <button mat-menu-item (click)="openWorkspace(ws.id)">
-            <mat-icon>open_in_new</mat-icon> Open
-          </button>
-          <button mat-menu-item class="delete-item" (click)="deleteWorkspace(ws.id, $event)">
-            <mat-icon>delete</mat-icon> Delete
+          <button mat-menu-item (click)="openWorkspace(ws.id)"><mat-icon>open_in_new</mat-icon> Open</button>
+          <button mat-menu-item (click)="deleteWorkspace(ws.id, $event)" class="text-red-600">
+            <mat-icon class="text-red-500">delete</mat-icon> Delete
           </button>
         </mat-menu>
       </div>
-    </div>
-
-    <!-- Empty State -->
-    <div *ngIf="!loading && workspaces.length === 0" class="empty-state">
-      <div class="empty-icon">
-        <mat-icon>workspaces</mat-icon>
-      </div>
-      <h3>No workspaces yet</h3>
-      <p>Create a workspace to organize your boards and collaborate with your team.</p>
-      <button mat-flat-button color="primary" (click)="showCreateForm = true">
-        Get Started
-      </button>
     </div>
 
   </main>

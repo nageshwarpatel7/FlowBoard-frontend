@@ -23,8 +23,8 @@
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
+      <label class="custom-label">Full name</label>
       <mat-form-field appearance="outline">
-        <mat-label>Full name</mat-label>
         <input matInput formControlName="fullName"
                placeholder="your name" />
         <mat-error *ngIf="fullName.hasError('required')">
@@ -32,10 +32,10 @@
         </mat-error>
       </mat-form-field>
 
+      <label class="custom-label">Email address</label>
       <mat-form-field appearance="outline">
-        <mat-label>Email address</mat-label>
         <input matInput formControlName="email"
-               type="email" placeholder="you@example.com" />
+               type="email" placeholder="you&#64;example.com" />
         <mat-error *ngIf="email.hasError('required')">
           Email is required
         </mat-error>
@@ -44,8 +44,8 @@
         </mat-error>
       </mat-form-field>
 
+      <label class="custom-label">Username</label>
       <mat-form-field appearance="outline">
-        <mat-label>Username</mat-label>
         <mat-hint>Letters, numbers, underscores only</mat-hint>
         <input matInput formControlName="username"
                placeholder="enter username" />
@@ -60,8 +60,8 @@
         </mat-error>
       </mat-form-field>
 
+      <label class="custom-label">Password</label>
       <mat-form-field appearance="outline">
-        <mat-label>Password</mat-label>
         <input matInput formControlName="password"
                [type]="hidePassword ? 'password' : 'text'" />
         <button mat-icon-button matSuffix type="button"
@@ -75,8 +75,8 @@
         </mat-error>
       </mat-form-field>
 
+      <label class="custom-label">Confirm password</label>
       <mat-form-field appearance="outline">
-        <mat-label>Confirm password</mat-label>
         <input matInput formControlName="confirmPassword"
                [type]="hidePassword ? 'password' : 'text'" />
         <mat-error *ngIf="form.hasError('mismatch')">

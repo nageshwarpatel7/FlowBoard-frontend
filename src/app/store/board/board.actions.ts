@@ -53,9 +53,13 @@ export const moveCardFailure = createAction(
 
 export const moveList = createAction(
   '[Board] Move List',
-  props<{ boardId: number, prevIndex: number, currentIndex: number }>()
+  props<{
+    boardId: number;
+    prevIndex: number;
+    currentIndex: number;
+    orderedListIds: number[];  
+  }>()
 );
-
 export const moveListSuccess = createAction('[Board] Move List Success');
 export const moveListFailure = createAction(
   '[Board] Move List Failure',
@@ -108,7 +112,7 @@ export const deleteListFailure = createAction(
 
 export const addCard = createAction(
   '[Board] Add Card',
-  props<{ card: Card }>() // In real app, we might pass Request and let effect return Card, but the UI already has CardCreated output. We can just add it to store.
+  props<{ card: Card }>() 
 );
 
 export const updateCard = createAction(
@@ -120,3 +124,4 @@ export const deleteCard = createAction(
   '[Board] Delete Card',
   props<{ cardId: number, listId: number }>()
 );
+

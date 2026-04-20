@@ -59,20 +59,16 @@ export class CardService {
     return this.http.put<Card>(`${this.base}/${id}/unarchive`, {});
   }
 
-  setAssignee(id: number,
-    assigneeId: number | null): Observable<Card> {
-    return this.http.put<Card>(
-      `${this.base}/${id}/assignee`, { assigneeId });
+  setAssignee(id: number, assigneeId: number | null): Observable<Card> {
+  return this.http.put<Card>(`${this.base}/${id}/assignee`, { assigneeId });
   }
 
   setPriority(id: number, priority: Priority): Observable<Card> {
-    return this.http.put<Card>(
-      `${this.base}/${id}/priority`, { priority });
+    return this.http.put<Card>(`${this.base}/${id}/priority`, { priority });
   }
 
   setStatus(id: number, status: CardStatus): Observable<Card> {
-    return this.http.put<Card>(
-      `${this.base}/${id}/status`, { status });
+    return this.http.put<Card>(`${this.base}/${id}/status`, { status });
   }
 
   getByStatus(boardId: number, status: CardStatus): Observable<Card[]> {
@@ -109,4 +105,29 @@ export class CardService {
     return this.http.get<CardActivity[]>(
       `${this.base}/${cardId}/activity`);
   }
+
+  getBoardStats(boardId: number): Observable<any> {
+  return this.http.get(`${this.base}/board/${boardId}/stats`);
+}
+
+copyCard(id: number, targetListId?: number): Observable<Card> {
+  const params = targetListId ? `?targetListId=${targetListId}` : '';
+  return this.http.post<Card>(`${this.base}/${id}/copy${params}`, {});
+}
+
+getActivityPaged(
+  cardId: number,
+  page: number = 0,
+  size: number = 20
+): Observable<any> {
+  return this.http.get(
+    `${this.base}/${cardId}/activity/paged?page=${page}&size=${size}`);
+}
+
+globalSearch(keyword?: string, assigneeId?: number): Observable<Card[]> {
+  let params = '';
+  if (keyword)    params += `keyword=${keyword}&`;
+  if (assigneeId) params += `assigneeId=${assigneeId}`;
+  return this.http.get<Card[]>(`${this.base}/search?${params}`);
+}
 }

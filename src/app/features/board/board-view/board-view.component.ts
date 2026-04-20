@@ -72,6 +72,8 @@ export class BoardViewComponent implements OnInit {
   showAnalytics = false;
   showArchive   = false;
 
+  boardMembers: Array<{ userId: number; displayName?: string }> = [];
+
   listForm = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(1)]]
   });
@@ -106,18 +108,23 @@ export class BoardViewComponent implements OnInit {
   }
 
   loadBoard(id: number): void {
-    this.loading = true;
-    this.boardService.getById(id).subscribe({
-      next: b => {
-        this.board = b;
-        this.store.dispatch(BoardActions.loadBoardDetails({ boardId: id }));
-      },
-      error: () => {
-        this.loading = false;
-        this.snack.open('Board not found', 'Close', { duration: 3000 });
-      }
-    });
-  }
+  this.loading = true;
+  this.boardService.getById(id).subscribe({
+    next: b => {
+      this.board = b;
+      this.boardMembers = (b.members || []).map((m: any) => ({
+        userId: m.userId,
+        displayName: m.user?.fullName,
+        avatarUrl: m.user?.avatarUrl
+      }));
+      this.store.dispatch(BoardActions.loadBoardDetails({ boardId: id }));
+    },
+    error: () => {
+      this.loading = false;
+      this.snack.open('Board not found', 'Close', { duration: 3000 });
+    }
+  });
+}
 
   getCards(listId: number): Card[] {
     return this.allCards.filter(c => c.listId === listId);
@@ -130,10 +137,11 @@ export class BoardViewComponent implements OnInit {
   onListDrop(event: CdkDragDrop<TaskList[]>): void {
     if (event.previousIndex === event.currentIndex) return;
     this.store.dispatch(BoardActions.moveList({
-      boardId: this.board!.id,
-      prevIndex: event.previousIndex,
-      currentIndex: event.currentIndex
-    }));
+    boardId: this.board!.id,
+    prevIndex: event.previousIndex,
+    currentIndex: event.currentIndex,
+    orderedListIds: this.lists.map(l => l.id)  // after moveItemInArray
+  }));
   }
 
   onCardDrop(event: CdkDragDrop<Card[]>,

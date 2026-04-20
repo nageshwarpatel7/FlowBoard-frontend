@@ -1,56 +1,61 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterModule } from '@angular/router';
+import { RouterModule, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
-
-import { NotificationCenterComponent } from '../../features/notification/notification-center/notification-center.component';
+import { Observable } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
-import * as AuthActions from '../../store/auth/auth.actions';
+import { PaymentService } from '../../core/services/payment.service';
+import { NotificationCenterComponent } from '../../features/notification/notification-center/notification-center.component';
 import * as AuthSelectors from '../../store/auth/auth.selectors';
+import * as AuthActions from '../../store/auth/auth.actions';
+import { UserProfile } from '../../core/models/user.model';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
   imports: [
-    CommonModule,
-    RouterOutlet,
-    RouterModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    MatTooltipModule,
-    MatDividerModule,
-    NotificationCenterComponent
+    CommonModule, RouterModule, RouterOutlet,
+    MatButtonModule, MatIconModule, MatMenuModule,
+    MatDividerModule, MatTooltipModule, NotificationCenterComponent
   ],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.scss'
 })
-export class MainLayoutComponent {
-  private store = inject(Store);
-  authService = inject(AuthService);
+export class MainLayoutComponent implements OnInit {
+  readonly authService    = inject(AuthService);
+  private store           = inject(Store);
+  private paymentService  = inject(PaymentService);
 
-  user$ = this.store.select(AuthSelectors.selectUser);
+  user$: Observable<UserProfile | null> = this.store.select(AuthSelectors.selectUser);
   isDarkMode = false;
 
+  planName = computed(() => {
+    const p = this.paymentService.currentPlan();
+    return p?.planDisplayName ?? 'Free';
+  });
+
+  isFreeUser = computed(() => {
+    const p = this.paymentService.currentPlan();
+    return !p || p.planName === 'FREE';
+  });
+
   ngOnInit() {
+    this.store.dispatch(AuthActions.getProfile());
+    this.paymentService.getSubscription().subscribe();
     this.isDarkMode = document.body.classList.contains('dark');
   }
 
   toggleTheme() {
     this.isDarkMode = !this.isDarkMode;
-    if (this.isDarkMode) {
-      document.body.classList.add('dark');
-    } else {
-      document.body.classList.remove('dark');
-    }
+    document.body.classList.toggle('dark', this.isDarkMode);
   }
 
-  logout(): void {
+  logout() {
     this.store.dispatch(AuthActions.logout());
   }
 }

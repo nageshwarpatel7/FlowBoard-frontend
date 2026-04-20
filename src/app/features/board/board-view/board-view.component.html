@@ -186,14 +186,16 @@
     <!-- Add list panel -->
     <div class="add-list-panel" *ngIf="!loading">
       <div *ngIf="showAddList" class="add-list-form glass">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>List name</mat-label>
-          <input matInput [formControl]="$any(listForm.get('name'))"
-                 (keydown.enter)="addList()"
-                 (keydown.escape)="showAddList = false"
-                 placeholder="e.g. In Progress"
-                 autofocus />
-        </mat-form-field>
+        <div>
+          <label class="custom-label">List name<span style="color:red">*</span></label>
+          <mat-form-field appearance="outline" class="full-width">
+            <input matInput [formControl]="$any(listForm.get('name'))"
+                   (keydown.enter)="addList()"
+                   (keydown.escape)="showAddList = false"
+                   placeholder="e.g. In Progress"
+                   autofocus />
+          </mat-form-field>
+        </div>
         <div class="add-list-actions">
           <button mat-flat-button color="primary"
                   (click)="addList()"
@@ -220,7 +222,9 @@
        (click)="closeCardDetail()">
     <div class="card-detail-panel" (click)="$event.stopPropagation()">
       <app-card-detail
+        *ngIf="showCardDetail && selectedCard"
         [card]="selectedCard"
+        [boardMembers]="boardMembers"
         (cardUpdated)="onCardUpdated($event)"
         (cardDeleted)="onCardDeleted($event)"
         (closed)="closeCardDetail()">

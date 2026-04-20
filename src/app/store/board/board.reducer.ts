@@ -12,6 +12,15 @@ export const boardReducer = createReducer(
     ...state,
     selectedId: id
   })),
+  on(BoardActions.loadBoardDetails, (state) => ({
+    ...state,
+    loading: true
+  })),
+  on(BoardActions.loadBoardDetailsFailure, (state, { error }) => ({
+    ...state,
+    loading: false,
+    error
+  })),
   on(BoardActions.loadBoardDetailsSuccess, (state, { lists, cards }) => ({
     ...state,
     lists,
@@ -19,30 +28,34 @@ export const boardReducer = createReducer(
     loading: false
   })),
   on(BoardActions.moveCard, (state, { cardId, fromListId, toListId, prevIndex, currentIndex }) => {
-    // Immutable array operations for moving card
-    const newCards = [...state.cards];
-    if (fromListId === toListId) {
-      // Reordering within the same list
-      const listCards = newCards.filter(c => c.listId === fromListId).sort((a,b) => {
-        // We'll rely on the original array order for this naive optimistic update, 
-        // but technically we should sort by some position field if it existed.
-        return 0; 
-      });
-      // Actually, since cards array doesn't explicitly store 'position' in a way we easily sort,
-      // the simplest optimistic update is just changing listId.
-      // But for same list, we don't even change listId. We'll just let the backend handle the order 
-      // or implement a basic swap. For now, doing nothing to state.cards for same list reorder 
-      // is safer than messing up the whole array without a 'position' field.
-      return state;
-    } else {
-      // Moving to a new list
-      const cardIdx = newCards.findIndex(c => c.id === cardId);
-      if (cardIdx > -1) {
-        newCards[cardIdx] = { ...newCards[cardIdx], listId: toListId };
-      }
-      return { ...state, cards: newCards };
+  const newCards = state.cards.map(c => ({ ...c }));
+
+  if (fromListId === toListId) {
+    // FIX: implement same-list reorder using position field
+    const listCards = newCards
+      .filter(c => c.listId === fromListId)
+      .sort((a, b) => (a.position ?? 0) - (b.position ?? 0));
+
+    // Move the card from prevIndex to currentIndex in the sorted array
+    const [moved] = listCards.splice(prevIndex, 1);
+    listCards.splice(currentIndex, 0, moved);
+
+    // Reassign positions
+    listCards.forEach((card, idx) => {
+      const globalIdx = newCards.findIndex(c => c.id === card.id);
+      if (globalIdx > -1) newCards[globalIdx] = { ...newCards[globalIdx], position: idx };
+    });
+
+    return { ...state, cards: newCards };
+  } else {
+    // Moving to a different list
+    const cardIdx = newCards.findIndex(c => c.id === cardId);
+    if (cardIdx > -1) {
+      newCards[cardIdx] = { ...newCards[cardIdx], listId: toListId, position: currentIndex };
     }
-  }),
+    return { ...state, cards: newCards };
+  }
+}),
   on(BoardActions.moveCardFailure, (state, { cardId, originalListId }) => {
     const newCards = [...state.cards];
     const cardIdx = newCards.findIndex(c => c.id === cardId);

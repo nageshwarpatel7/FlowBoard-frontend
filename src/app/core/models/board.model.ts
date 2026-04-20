@@ -1,9 +1,12 @@
+import { UserProfile } from './user.model';
+
 export type BoardMemberRole = 'OBSERVER' | 'MEMBER' | 'ADMIN';
 
 export interface BoardMember {
   userId: number;
   role: BoardMemberRole;
   addedAt: string;
+  user?: UserProfile;
 }
 
 export interface BoardAnalytics {
