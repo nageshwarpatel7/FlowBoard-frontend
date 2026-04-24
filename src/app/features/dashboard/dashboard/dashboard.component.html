@@ -93,7 +93,7 @@
         </div>
         <p class="ws-desc">{{ ws.description || 'No description.' }}</p>
         <div class="ws-footer">
-          <span class="member-count"><mat-icon>group</mat-icon> {{ ws.members?.length || 0 }} members</span>
+          <span class="member-count"><mat-icon>group</mat-icon> {{ ws.members.length || 0 }} members</span>
           <span class="ws-date">{{ ws.createdAt | date:'MMM d' }}</span>
         </div>
         <mat-menu #wsMenu="matMenu">

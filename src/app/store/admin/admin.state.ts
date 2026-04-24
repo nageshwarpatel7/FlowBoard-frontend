@@ -1,17 +1,13 @@
 import { UserProfile } from '../../core/models/user.model';
 import { Workspace } from '../../core/models/workspace.model';
 import { Board } from '../../core/models/board.model';
+import { AdminStats } from '../../core/services/admin.service';
 
 export interface AdminState {
   users: UserProfile[];
   workspaces: Workspace[];
   boards: Board[];
-  stats: {
-    totalUsers: number;
-    totalWorkspaces: number;
-    totalBoards: number;
-    activeUsersToday: number;
-  } | null;
+  stats: AdminStats | null;
   loading: boolean;
   error: string | null;
 }

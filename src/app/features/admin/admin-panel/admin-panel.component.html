@@ -1,116 +1,511 @@
-<div class="admin-container p-8 max-w-7xl mx-auto">
-  
-  <header class="mb-10">
-    <h1 class="text-3xl font-black text-slate-800 tracking-tight mb-2">Platform Administration</h1>
-    <p class="text-slate-500 font-medium">Manage users, audit activities, and monitor platform health.</p>
+<div class="admin-root">
+
+  <!-- ══════════════════════════════════════════════════════════════
+       PAGE HEADER
+  ══════════════════════════════════════════════════════════════ -->
+  <header class="admin-header">
+    <div class="admin-header-left">
+      <div class="admin-header-icon">
+        <mat-icon>admin_panel_settings</mat-icon>
+      </div>
+      <div>
+        <h1 class="admin-title">Platform Administration</h1>
+        <p class="admin-subtitle">Manage users, workspaces, boards, and monitor platform health.</p>
+      </div>
+    </div>
+    <div class="admin-header-right">
+      <button mat-stroked-button class="refresh-btn" id="admin-refresh-btn"
+        (click)="ngOnInit()">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </div>
   </header>
 
-  <!-- DASHBOARD STATS -->
-  <div class="stats-grid grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-    <mat-card class="stat-card border-none shadow-sm rounded-2xl overflow-hidden bg-indigo-600 text-white">
-      <mat-card-content class="p-6">
-        <div class="flex items-center justify-between mb-4">
-          <mat-icon class="opacity-40">groups</mat-icon>
-          <span class="text-[10px] font-black uppercase tracking-widest opacity-60">Total Users</span>
-        </div>
-        <div class="text-4xl font-black">{{ (stats$ | async)?.totalUsers || 0 }}</div>
-      </mat-card-content>
-    </mat-card>
+  <!-- ══════════════════════════════════════════════════════════════
+       KPI STATS ROW
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="stats-grid" *ngIf="stats$ | async as stats">
+    <div class="stat-card stat-primary">
+      <div class="stat-icon-wrap">
+        <mat-icon>group</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Users</span>
+        <span class="stat-value">{{ stats.totalUsers | number }}</span>
+        <span class="stat-delta positive">
+          <mat-icon>trending_up</mat-icon> Platform members
+        </span>
+      </div>
+    </div>
 
-    <mat-card class="stat-card border-none shadow-sm rounded-2xl overflow-hidden bg-white">
-      <mat-card-content class="p-6">
-        <div class="flex items-center justify-between mb-4">
-          <mat-icon class="text-purple-500">workspaces</mat-icon>
-          <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Workspaces</span>
-        </div>
-        <div class="text-4xl font-black text-slate-800">{{ (stats$ | async)?.totalWorkspaces || 0 }}</div>
-      </mat-card-content>
-    </mat-card>
+    <div class="stat-card stat-purple">
+      <div class="stat-icon-wrap">
+        <mat-icon>workspaces</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Workspaces</span>
+        <span class="stat-value">{{ stats.totalWorkspaces | number }}</span>
+        <span class="stat-delta">
+          <mat-icon>folder_open</mat-icon> Active spaces
+        </span>
+      </div>
+    </div>
 
-    <mat-card class="stat-card border-none shadow-sm rounded-2xl overflow-hidden bg-white">
-      <mat-card-content class="p-6">
-        <div class="flex items-center justify-between mb-4">
-          <mat-icon class="text-teal-500">dashboard</mat-icon>
-          <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Boards</span>
-        </div>
-        <div class="text-4xl font-black text-slate-800">{{ (stats$ | async)?.totalBoards || 0 }}</div>
-      </mat-card-content>
-    </mat-card>
+    <div class="stat-card stat-teal">
+      <div class="stat-icon-wrap">
+        <mat-icon>dashboard</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Boards</span>
+        <span class="stat-value">{{ stats.totalBoards | number }}</span>
+        <span class="stat-delta">
+          <mat-icon>view_kanban</mat-icon> Kanban boards
+        </span>
+      </div>
+    </div>
 
-    <mat-card class="stat-card border-none shadow-sm rounded-2xl overflow-hidden bg-white">
-      <mat-card-content class="p-6">
-        <div class="flex items-center justify-between mb-4">
-          <mat-icon class="text-orange-500">flash_on</mat-icon>
-          <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">Active Today</span>
-        </div>
-        <div class="text-4xl font-black text-slate-800">{{ (stats$ | async)?.activeUsersToday || 0 }}</div>
-      </mat-card-content>
-    </mat-card>
+    <div class="stat-card stat-amber">
+      <div class="stat-icon-wrap">
+        <mat-icon>bolt</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Active Today</span>
+        <span class="stat-value">{{ stats.activeUsersToday | number }}</span>
+        <span class="stat-delta positive">
+          <mat-icon>schedule</mat-icon> Last 24 hours
+        </span>
+      </div>
+    </div>
   </div>
 
-  <mat-tab-group class="modern-tabs">
-    <!-- USERS MANAGEMENT -->
-    <mat-tab label="User Management">
-      <div class="pt-8 bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <table mat-table [dataSource]="(users$ | async) || []" class="w-full">
-          
-          <ng-container matColumnDef="avatar">
-            <th mat-header-cell *matHeaderCellDef class="bg-slate-50 text-slate-400 uppercase text-[10px] font-black tracking-widest p-4">User</th>
-            <td mat-cell *matCellDef="let user" class="p-4">
-              <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 font-bold">
-                {{ user.fullName[0] }}
-              </div>
-            </td>
-          </ng-container>
+  <!-- Stats skeleton while loading -->
+  <div class="stats-grid" *ngIf="!(stats$ | async)">
+    <div class="stat-card skeleton" *ngFor="let s of [1,2,3,4]"></div>
+  </div>
 
-          <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef class="bg-slate-50 text-slate-400 uppercase text-[10px] font-black tracking-widest">Full Name</th>
-            <td mat-cell *matCellDef="let user" class="font-bold text-slate-800">{{ user.fullName }}</td>
-          </ng-container>
+  <!-- ══════════════════════════════════════════════════════════════
+       MAIN TABS
+  ══════════════════════════════════════════════════════════════ -->
+  <div class="admin-tabs-wrap">
+    <mat-tab-group class="admin-tabs" animationDuration="200ms">
 
-          <ng-container matColumnDef="email">
-            <th mat-header-cell *matHeaderCellDef class="bg-slate-50 text-slate-400 uppercase text-[10px] font-black tracking-widest">Email Address</th>
-            <td mat-cell *matCellDef="let user" class="text-slate-500 font-medium">{{ user.email }}</td>
-          </ng-container>
+      <!-- ─── TAB: USER MANAGEMENT ─────────────────────────────── -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">manage_accounts</mat-icon>
+          User Management
+        </ng-template>
 
-          <ng-container matColumnDef="role">
-            <th mat-header-cell *matHeaderCellDef class="bg-slate-50 text-slate-400 uppercase text-[10px] font-black tracking-widest">Role</th>
-            <td mat-cell *matCellDef="let user">
-              <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest"
-                    [ngClass]="user.role === 'PLATFORM_ADMIN' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'">
-                {{ user.role }}
-              </span>
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef class="bg-slate-50 text-slate-400 uppercase text-[10px] font-black tracking-widest">Actions</th>
-            <td mat-cell *matCellDef="let user">
-              <button mat-icon-button [matMenuTriggerFor]="userActions">
-                <mat-icon>more_vert</mat-icon>
+        <div class="tab-content">
+          <!-- Toolbar -->
+          <div class="table-toolbar">
+            <div class="search-box">
+              <mat-icon class="search-icon-inline">search</mat-icon>
+              <input
+                id="user-search-input"
+                class="search-input-inline"
+                type="text"
+                placeholder="Search users by name, email, or username…"
+                [(ngModel)]="userSearch"
+                (input)="onUserSearchChange()" />
+              <button *ngIf="userSearch" mat-icon-button class="clear-btn" (click)="userSearch=''; onUserSearchChange()">
+                <mat-icon>close</mat-icon>
               </button>
-              <mat-menu #userActions="matMenu">
-                <button mat-menu-item (click)="changeRole(user.id, 'PLATFORM_ADMIN')">Make Admin</button>
-                <button mat-menu-item (click)="changeRole(user.id, 'MEMBER')">Make Member</button>
-                <mat-divider></mat-divider>
-                <button mat-menu-item class="text-red-500"><mat-icon class="text-red-500">block</mat-icon> Deactivate</button>
-              </mat-menu>
-            </td>
-          </ng-container>
+            </div>
+            <div class="filter-chips">
+              <button class="chip" [class.active]="roleFilter==='ALL'" (click)="roleFilter='ALL'; onUserSearchChange()">All</button>
+              <button class="chip" [class.active]="roleFilter==='PLATFORM_ADMIN'" (click)="roleFilter='PLATFORM_ADMIN'; onUserSearchChange()">Admins</button>
+              <button class="chip" [class.active]="roleFilter==='MEMBER'" (click)="roleFilter='MEMBER'; onUserSearchChange()">Members</button>
+            </div>
+          </div>
 
-          <tr mat-header-row *matHeaderRowDef="userColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: userColumns;"></tr>
-        </table>
-      </div>
-    </mat-tab>
+          <!-- User Table -->
+          <div class="table-container">
+            <table mat-table [dataSource]="(filteredUsers$ | async) || []" class="admin-table" id="users-table">
 
-    <!-- SYSTEM HEALTH -->
-    <mat-tab label="System Health">
-      <div class="p-8 text-center text-slate-400">
-        <mat-icon class="text-6xl w-16 h-16 mb-4 opacity-20">biotech</mat-icon>
-        <p class="font-bold">System monitoring tools coming soon.</p>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
+              <!-- Avatar -->
+              <ng-container matColumnDef="avatar">
+                <th mat-header-cell *matHeaderCellDef>User</th>
+                <td mat-cell *matCellDef="let user">
+                  <div class="user-cell">
+                    <div class="avatar-circle"
+                         [style.background]="getAvatarColor(user.fullName)"
+                         [style.backgroundImage]="user.avatarUrl ? 'url('+user.avatarUrl+')' : 'none'"
+                         [style.backgroundSize]="'cover'">
+                      <span *ngIf="!user.avatarUrl">{{ getInitials(user.fullName) }}</span>
+                    </div>
+                  </div>
+                </td>
+              </ng-container>
+
+              <!-- Name -->
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Full Name</th>
+                <td mat-cell *matCellDef="let user">
+                  <span class="user-name">{{ user.fullName }}</span>
+                  <span class="user-username">&#64;{{ user.username }}</span>
+                </td>
+              </ng-container>
+
+              <!-- Email -->
+              <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef>Email</th>
+                <td mat-cell *matCellDef="let user">
+                  <span class="email-text">{{ user.email }}</span>
+                  <span class="verified-badge" *ngIf="user.emailVerified">
+                    <mat-icon>verified</mat-icon> Verified
+                  </span>
+                </td>
+              </ng-container>
+
+              <!-- Role -->
+              <ng-container matColumnDef="role">
+                <th mat-header-cell *matHeaderCellDef>Role</th>
+                <td mat-cell *matCellDef="let user">
+                  <span class="role-badge"
+                        [class.role-admin]="user.role === 'PLATFORM_ADMIN'"
+                        [class.role-owner]="user.role === 'BOARD_OWNER'"
+                        [class.role-member]="user.role === 'MEMBER'">
+                    <mat-icon>{{ user.role === 'PLATFORM_ADMIN' ? 'shield' : user.role === 'BOARD_OWNER' ? 'stars' : 'person' }}</mat-icon>
+                    {{ user.role === 'PLATFORM_ADMIN' ? 'Admin' : user.role === 'BOARD_OWNER' ? 'Owner' : 'Member' }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <!-- Status -->
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Status</th>
+                <td mat-cell *matCellDef="let user">
+                  <span class="status-dot" [class.active]="user.active" [class.inactive]="!user.active">
+                    {{ user.active ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <!-- Joined -->
+              <ng-container matColumnDef="joined">
+                <th mat-header-cell *matHeaderCellDef>Joined</th>
+                <td mat-cell *matCellDef="let user" class="date-cell">
+                  {{ user.createdAt | date:'mediumDate' }}
+                </td>
+              </ng-container>
+
+              <!-- Actions -->
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let user">
+                  <button mat-icon-button [matMenuTriggerFor]="userMenu"
+                          [attr.id]="'user-action-' + user.id"
+                          matTooltip="Actions">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #userMenu="matMenu" class="admin-menu">
+                    <button mat-menu-item (click)="changeRole(user.id, 'PLATFORM_ADMIN')"
+                            *ngIf="user.role !== 'PLATFORM_ADMIN'">
+                      <mat-icon class="icon-admin">shield</mat-icon>
+                      Make Platform Admin
+                    </button>
+                    <button mat-menu-item (click)="changeRole(user.id, 'MEMBER')"
+                            *ngIf="user.role !== 'MEMBER'">
+                      <mat-icon>person</mat-icon>
+                      Set as Member
+                    </button>
+                    <mat-divider></mat-divider>
+                    <button mat-menu-item (click)="confirmDeactivate(user)" *ngIf="user.active">
+                      <mat-icon class="icon-warn">block</mat-icon>
+                      Deactivate Account
+                    </button>
+                    <button mat-menu-item (click)="confirmReactivate(user)" *ngIf="!user.active">
+                      <mat-icon class="icon-success">how_to_reg</mat-icon>
+                      Reactivate Account
+                    </button>
+                    <button mat-menu-item (click)="confirmDelete(user)">
+                      <mat-icon class="icon-danger">delete_forever</mat-icon>
+                      Delete Permanently
+                    </button>
+
+                  </mat-menu>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="userColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: userColumns;"></tr>
+
+              <!-- Empty state -->
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell empty-state" [attr.colspan]="userColumns.length">
+                  <mat-icon>search_off</mat-icon>
+                  <p>No users match your search.</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- ─── TAB: WORKSPACES ───────────────────────────────────── -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">workspaces</mat-icon>
+          Workspaces
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="table-toolbar">
+            <div class="search-box">
+              <mat-icon class="search-icon-inline">search</mat-icon>
+              <input
+                id="ws-search-input"
+                class="search-input-inline"
+                type="text"
+                placeholder="Search workspaces…"
+                [(ngModel)]="wsSearch"
+                (input)="onWsSearchChange()" />
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table mat-table [dataSource]="(filteredWorkspaces$ | async) || []" class="admin-table" id="workspaces-table">
+
+              <ng-container matColumnDef="icon">
+                <th mat-header-cell *matHeaderCellDef>Workspace</th>
+                <td mat-cell *matCellDef="let ws">
+                  <div class="ws-icon"
+                       [style.backgroundImage]="ws.logoUrl ? 'url('+ws.logoUrl+')' : 'none'"
+                       [style.background]="ws.logoUrl ? '' : getAvatarColor(ws.name)">
+                    <span *ngIf="!ws.logoUrl">{{ ws.name[0].toUpperCase() }}</span>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td mat-cell *matCellDef="let ws">
+                  <span class="user-name">{{ ws.name }}</span>
+                  <span class="user-username">{{ ws.description || '—' }}</span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="visibility">
+                <th mat-header-cell *matHeaderCellDef>Visibility</th>
+                <td mat-cell *matCellDef="let ws">
+                  <span class="vis-badge" [class.vis-public]="ws.visibility==='PUBLIC'" [class.vis-private]="ws.visibility==='PRIVATE'">
+                    <mat-icon>{{ ws.visibility === 'PUBLIC' ? 'public' : 'lock' }}</mat-icon>
+                    {{ ws.visibility }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="members">
+                <th mat-header-cell *matHeaderCellDef>Members</th>
+                <td mat-cell *matCellDef="let ws" class="date-cell">{{ ws.members.length }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="created">
+                <th mat-header-cell *matHeaderCellDef>Created</th>
+                <td mat-cell *matCellDef="let ws" class="date-cell">{{ ws.createdAt | date:'mediumDate' }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="workspaceColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: workspaceColumns;"></tr>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell empty-state" [attr.colspan]="workspaceColumns.length">
+                  <mat-icon>workspaces</mat-icon>
+                  <p>No workspaces found.</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- ─── TAB: BOARDS ───────────────────────────────────────── -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">view_kanban</mat-icon>
+          Boards
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="table-toolbar">
+            <div class="search-box">
+              <mat-icon class="search-icon-inline">search</mat-icon>
+              <input
+                id="board-search-input"
+                class="search-input-inline"
+                type="text"
+                placeholder="Search boards…"
+                [(ngModel)]="boardSearch"
+                (input)="onBoardSearchChange()" />
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table mat-table [dataSource]="(filteredBoards$ | async) || []" class="admin-table" id="boards-table">
+
+              <ng-container matColumnDef="icon">
+                <th mat-header-cell *matHeaderCellDef>Board</th>
+                <td mat-cell *matCellDef="let b">
+                  <div class="board-icon"
+                       [style.background]="b.background || getAvatarColor(b.name)">
+                    <mat-icon>view_kanban</mat-icon>
+                  </div>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Name</th>
+                <td mat-cell *matCellDef="let b">
+                  <span class="user-name">{{ b.name }}</span>
+                  <span class="user-username">{{ b.description || '—' }}</span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="workspace">
+                <th mat-header-cell *matHeaderCellDef>Workspace ID</th>
+                <td mat-cell *matCellDef="let b" class="date-cell">#{{ b.workspaceId }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="visibility">
+                <th mat-header-cell *matHeaderCellDef>Visibility</th>
+                <td mat-cell *matCellDef="let b">
+                  <span class="vis-badge" [class.vis-public]="b.visibility==='PUBLIC'" [class.vis-private]="b.visibility==='PRIVATE'">
+                    <mat-icon>{{ b.visibility === 'PUBLIC' ? 'public' : 'lock' }}</mat-icon>
+                    {{ b.visibility }}
+                  </span>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="members">
+                <th mat-header-cell *matHeaderCellDef>Members</th>
+                <td mat-cell *matCellDef="let b" class="date-cell">{{ b.memberCount }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="created">
+                <th mat-header-cell *matHeaderCellDef>Created</th>
+                <td mat-cell *matCellDef="let b" class="date-cell">{{ b.createdAt | date:'mediumDate' }}</td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="boardColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: boardColumns;"></tr>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell empty-state" [attr.colspan]="boardColumns.length">
+                  <mat-icon>view_kanban</mat-icon>
+                  <p>No boards found.</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- ─── TAB: SYSTEM HEALTH ────────────────────────────────── -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">monitor_heart</mat-icon>
+          System Health
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="health-grid">
+
+            <div class="health-card">
+              <div class="health-card-header">
+                <mat-icon class="health-icon good">check_circle</mat-icon>
+                <span class="health-service">API Server</span>
+                <span class="health-status good">Operational</span>
+              </div>
+              <div class="health-metric">
+                <span>Response Time</span><span class="metric-val">42ms</span>
+              </div>
+              <mat-progress-bar mode="determinate" value="95" class="health-bar good"></mat-progress-bar>
+              <span class="health-uptime">99.98% uptime (30d)</span>
+            </div>
+
+            <div class="health-card">
+              <div class="health-card-header">
+                <mat-icon class="health-icon good">check_circle</mat-icon>
+                <span class="health-service">Database</span>
+                <span class="health-status good">Operational</span>
+              </div>
+              <div class="health-metric">
+                <span>Query Latency</span><span class="metric-val">8ms</span>
+              </div>
+              <mat-progress-bar mode="determinate" value="88" class="health-bar good"></mat-progress-bar>
+              <span class="health-uptime">99.95% uptime (30d)</span>
+            </div>
+
+            <div class="health-card">
+              <div class="health-card-header">
+                <mat-icon class="health-icon warn">warning</mat-icon>
+                <span class="health-service">Email Service</span>
+                <span class="health-status warn">Degraded</span>
+              </div>
+              <div class="health-metric">
+                <span>Delivery Rate</span><span class="metric-val">91%</span>
+              </div>
+              <mat-progress-bar mode="determinate" value="91" class="health-bar warn"></mat-progress-bar>
+              <span class="health-uptime">97.2% uptime (30d)</span>
+            </div>
+
+            <div class="health-card">
+              <div class="health-card-header">
+                <mat-icon class="health-icon good">check_circle</mat-icon>
+                <span class="health-service">File Storage</span>
+                <span class="health-status good">Operational</span>
+              </div>
+              <div class="health-metric">
+                <span>Storage Used</span><span class="metric-val">34%</span>
+              </div>
+              <mat-progress-bar mode="determinate" value="34" class="health-bar good"></mat-progress-bar>
+              <span class="health-uptime">99.99% uptime (30d)</span>
+            </div>
+
+          </div>
+
+          <!-- Recent Activity Log placeholder -->
+          <div class="activity-log">
+            <h3 class="log-title">
+              <mat-icon>history</mat-icon> Recent Platform Activity
+            </h3>
+            <ul class="log-list">
+              <li class="log-item">
+                <mat-icon class="log-icon info">person_add</mat-icon>
+                <div class="log-body">
+                  <span class="log-text">New user registered</span>
+                  <span class="log-time">2 min ago</span>
+                </div>
+              </li>
+              <li class="log-item">
+                <mat-icon class="log-icon success">workspace_premium</mat-icon>
+                <div class="log-body">
+                  <span class="log-text">Subscription upgraded to Pro</span>
+                  <span class="log-time">14 min ago</span>
+                </div>
+              </li>
+              <li class="log-item">
+                <mat-icon class="log-icon warn">warning</mat-icon>
+                <div class="log-body">
+                  <span class="log-text">Failed login attempt (3×)</span>
+                  <span class="log-time">1 hr ago</span>
+                </div>
+              </li>
+              <li class="log-item">
+                <mat-icon class="log-icon info">dashboard</mat-icon>
+                <div class="log-body">
+                  <span class="log-text">New board created in Acme Workspace</span>
+                  <span class="log-time">3 hr ago</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </mat-tab>
+
+    </mat-tab-group>
+  </div>
 
 </div>

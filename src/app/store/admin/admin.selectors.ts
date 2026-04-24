@@ -17,3 +17,18 @@ export const selectAdminLoading = createSelector(
   selectAdminState,
   (state: AdminState) => state.loading
 );
+
+export const selectAdminError = createSelector(
+  selectAdminState,
+  (state: AdminState) => state.error
+);
+
+export const selectAdminWorkspaces = createSelector(
+  selectAdminState,
+  (state: AdminState) => state.workspaces
+);
+
+export const selectAdminBoards = createSelector(
+  selectAdminState,
+  (state: AdminState) => state.boards
+);
