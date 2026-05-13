@@ -54,6 +54,7 @@ export class DashboardComponent implements OnInit {
   get isPaidUser(): boolean { return this.paymentService.isPaidPlan(); }
 
   get planLabel(): string {
+    if (!this.paymentService.subscriptionLoaded()) return 'Checking Plan';
     return (this.paymentService.currentPlan()?.planDisplayName ?? 'Free') + ' Plan';
   }
 

@@ -3,8 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
+import { WorkspaceService } from '../../../core/services/workspace.service';
 
 @Component({
   selector: 'app-invite-accept',
@@ -17,7 +16,7 @@ import { environment } from '../../../../environments/environment';
           <mat-icon>mail</mat-icon>
         </div>
         <ng-container *ngIf="status === 'loading'">
-          <h2>Accepting Invitation…</h2>
+          <h2>Accepting Invitation...</h2>
           <p>Please wait while we process your invitation.</p>
         </ng-container>
         <ng-container *ngIf="status === 'success'">
@@ -40,6 +39,7 @@ import { environment } from '../../../../environments/environment';
       align-items: center;
       justify-content: center;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 24px;
     }
     .invite-card {
       background: #fff;
@@ -51,22 +51,44 @@ import { environment } from '../../../../environments/environment';
       box-shadow: 0 20px 60px rgba(0,0,0,0.15);
     }
     .invite-icon {
-      width: 72px; height: 72px;
+      width: 72px;
+      height: 72px;
       border-radius: 50%;
       background: #ede9fe;
-      display: flex; align-items: center; justify-content: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin: 0 auto 24px;
-      mat-icon { color: #6366f1; font-size: 32px; width: 32px; height: 32px; }
     }
-    h2 { font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 10px; }
-    p  { font-size: 14px; color: #64748b; margin-bottom: 24px; line-height: 1.6; }
-    button { border-radius: 10px !important; font-weight: 700 !important; padding: 10px 28px !important; }
+    .invite-icon mat-icon {
+      color: #6366f1;
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+    h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 10px;
+    }
+    p {
+      font-size: 14px;
+      color: #64748b;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    button {
+      border-radius: 10px !important;
+      font-weight: 700 !important;
+      padding: 10px 28px !important;
+    }
   `]
 })
 export class InviteAcceptComponent implements OnInit {
-  private route  = inject(ActivatedRoute);
+  private route = inject(ActivatedRoute);
   private router = inject(Router);
-  private http   = inject(HttpClient);
+  private workspaceService = inject(WorkspaceService);
 
   status: 'loading' | 'success' | 'error' = 'loading';
   errorMsg = 'This invitation is invalid or has expired.';
@@ -77,17 +99,19 @@ export class InviteAcceptComponent implements OnInit {
       this.status = 'error';
       return;
     }
-    this.http.post(
-      `${environment.apiUrl}/workspace/invite/accept?token=${token}`, {},
-      { responseType: 'text' }
-    ).subscribe({
-      next: () => { this.status = 'success'; },
+
+    this.workspaceService.acceptInvitation(token).subscribe({
+      next: () => {
+        this.status = 'success';
+      },
       error: err => {
-        this.status   = 'error';
+        this.status = 'error';
         this.errorMsg = err.error?.message || 'This invitation is invalid or has expired.';
       }
     });
   }
 
-  goToDashboard(): void { this.router.navigate(['/dashboard']); }
+  goToDashboard(): void {
+    this.router.navigate(['/dashboard']);
+  }
 }

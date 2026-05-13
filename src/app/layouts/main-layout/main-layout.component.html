@@ -7,28 +7,31 @@
         <div class="logo-icon">F</div>
         <span class="logo-text">FlowBoard</span>
       </a>
-      <div class="search-wrapper">
-        <mat-icon class="search-icon">search</mat-icon>
-        <input type="text" placeholder="Search boards, cards..." class="search-input" />
-      </div>
+      <app-search class="header-search"></app-search>
     </div>
 
     <div class="header-right">
       <!-- Upgrade CTA for free users -->
-      <a *ngIf="isFreeUser()" routerLink="/pricing" class="upgrade-pill">
+      <a *ngIf="subscriptionLoaded() && isFreeUser()" routerLink="/pricing" class="upgrade-pill">
         <mat-icon>workspace_premium</mat-icon>
         <span>Upgrade</span>
       </a>
 
       <!-- Current plan badge for paid users -->
-      <a *ngIf="!isFreeUser()" routerLink="/pricing" class="plan-badge">
+      <a *ngIf="subscriptionLoaded() && !isFreeUser()" routerLink="/pricing" class="plan-badge">
         <mat-icon>workspace_premium</mat-icon>
         <span class="hidden sm:inline">{{ planName() }}</span>
       </a>
 
       <app-notification-center></app-notification-center>
 
-      <button mat-icon-button class="icon-btn" matTooltip="Toggle Dark Mode" (click)="toggleTheme()">
+      <button
+        mat-icon-button
+        class="icon-btn"
+        [matTooltip]="isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+        [attr.aria-label]="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
+        (click)="toggleTheme()"
+      >
         <mat-icon>{{ isDarkMode ? 'light_mode' : 'dark_mode' }}</mat-icon>
       </button>
 

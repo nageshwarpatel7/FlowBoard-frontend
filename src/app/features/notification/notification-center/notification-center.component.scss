@@ -1,47 +1,101 @@
 .notif-bell {
-  color: white;
+  color: var(--text-primary) !important;
+  min-width: 44px;
+  min-height: 44px;
+
+  mat-icon {
+    color: var(--text-primary) !important;
+    opacity: 1;
+  }
+
+  &:hover {
+    background: var(--bg-elevated) !important;
+    color: var(--accent-blue) !important;
+
+    mat-icon {
+      color: var(--accent-blue) !important;
+    }
+  }
+
   ::ng-deep .mat-badge-content {
     font-size: 10px;
     font-weight: 800;
+    background: var(--danger) !important;
+    color: #fff !important;
   }
 }
 
 .notif-item {
+  position: relative;
+  border-color: var(--border-color) !important;
+
   &.unread {
-    background: rgba(79, 70, 229, 0.03);
-    .notif-content .notif-title { color: var(--primary); }
+    background: rgba(33, 150, 243, 0.08);
+
+    .notif-content .notif-title {
+      color: var(--accent-blue);
+    }
+
     &::after {
       content: '';
-      width: 6px; height: 6px;
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: #ef4444;
+      background: var(--danger);
       position: absolute;
-      right: 12px; top: 12px;
+      right: 12px;
+      top: 12px;
     }
   }
 
   .notif-icon-wrapper {
-    &.assignment { background: #e0e7ff; color: #4338ca; }
-    &.comment    { background: #fef3c7; color: #92400e; }
-    &.due_date   { background: #dcfce7; color: #15803d; }
-    &.overdue    { background: #fee2e2; color: #b91c1c; }
-    &.move       { background: #f1f5f9; color: #475569; }
+    &.assignment {
+      background: rgba(33, 150, 243, 0.2);
+      color: var(--accent-blue);
+    }
+
+    &.comment {
+      background: rgba(245, 158, 11, 0.18);
+      color: #ffb74d;
+    }
+
+    &.due_date {
+      background: rgba(76, 175, 80, 0.18);
+      color: var(--success);
+    }
+
+    &.overdue {
+      background: rgba(244, 67, 54, 0.18);
+      color: var(--danger);
+    }
+
+    &.move {
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+    }
   }
 }
 
 .custom-scrollbar {
-  &::-webkit-scrollbar { width: 5px; }
-  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+  }
+
   &::-webkit-scrollbar-thumb {
-    background: #e2e8f0;
-    border-radius: 10px;
-    &:hover { background: #cbd5e1; }
+    background: var(--accent-blue);
+    border-radius: 6px;
   }
 }
 
 ::ng-deep .modern-notif-menu {
-  border-radius: 16px !important;
+  border-radius: var(--radius-md) !important;
   overflow: hidden !important;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  box-shadow: var(--shadow) !important;
   margin-top: 8px;
+  background: var(--bg-elevated) !important;
+  border: 1px solid var(--border-color);
 }

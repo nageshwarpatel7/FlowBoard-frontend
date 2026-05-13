@@ -1,0 +1,72 @@
+<main class="landing-shell">
+  <header class="landing-header">
+    <a routerLink="/" class="brand">
+      <span class="brand-mark">F</span>
+      <span>FlowBoard</span>
+    </a>
+
+    <nav class="landing-actions" aria-label="Account actions">
+      <a mat-button routerLink="/login">Log in</a>
+      <a mat-flat-button color="primary" routerLink="/register">Sign up</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">Project work, clearer</p>
+      <h1>FlowBoard</h1>
+      <p class="hero-text">
+        A collaborative board app for managing workspaces, Kanban boards, cards,
+        members, notifications, analytics, and team administration.
+      </p>
+
+      <div class="hero-actions">
+        <a mat-flat-button color="primary" routerLink="/register">
+          <mat-icon>person_add</mat-icon>
+          Create account
+        </a>
+        <a mat-stroked-button routerLink="/login">
+          <mat-icon>login</mat-icon>
+          Log in
+        </a>
+      </div>
+    </div>
+
+    <div class="board-preview" aria-label="FlowBoard board preview">
+      <div class="preview-topbar">
+        <span>Product Workspace</span>
+        <div class="preview-members">
+          <span>AN</span>
+          <span>RK</span>
+          <span>JS</span>
+        </div>
+      </div>
+
+      <div class="preview-columns">
+        <article>
+          <h2>To do</h2>
+          <p>Invite workspace members</p>
+          <p>Draft launch checklist</p>
+        </article>
+        <article>
+          <h2>In progress</h2>
+          <p>Build board analytics</p>
+          <p>Review notification rules</p>
+        </article>
+        <article>
+          <h2>Done</h2>
+          <p>Set up payment plans</p>
+          <p>Create admin dashboard</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="details" aria-label="FlowBoard details">
+    <article *ngFor="let item of highlights" class="detail-card">
+      <mat-icon>{{ item.icon }}</mat-icon>
+      <h2>{{ item.title }}</h2>
+      <p>{{ item.text }}</p>
+    </article>
+  </section>
+</main>

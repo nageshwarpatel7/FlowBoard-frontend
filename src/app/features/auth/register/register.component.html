@@ -63,7 +63,7 @@
       <label class="custom-label">Password</label>
       <mat-form-field appearance="outline">
         <input matInput formControlName="password"
-               [type]="hidePassword ? 'password' : 'text'" />
+               [type]="hidePassword ? 'password' : 'text'" placeholder="••••••••" />
         <button mat-icon-button matSuffix type="button"
                 (click)="hidePassword = !hidePassword">
           <mat-icon>
@@ -78,7 +78,7 @@
       <label class="custom-label">Confirm password</label>
       <mat-form-field appearance="outline">
         <input matInput formControlName="confirmPassword"
-               [type]="hidePassword ? 'password' : 'text'" />
+               [type]="hidePassword ? 'password' : 'text'" placeholder="••••••••" />
         <mat-error *ngIf="form.hasError('mismatch')">
           Passwords do not match
         </mat-error>

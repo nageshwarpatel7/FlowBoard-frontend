@@ -1,4 +1,10 @@
-<button mat-icon-button [matMenuTriggerFor]="notifMenu" class="notif-bell">
+<button
+  mat-icon-button
+  type="button"
+  [matMenuTriggerFor]="notifMenu"
+  class="notif-bell"
+  aria-label="Open notifications"
+>
   <mat-icon [matBadge]="unreadCount$ | async" 
             [matBadgeHidden]="(unreadCount$ | async) === 0" 
             matBadgeColor="warn"
@@ -8,7 +14,9 @@
 <mat-menu #notifMenu="matMenu" class="modern-notif-menu">
   <div class="notif-header flex items-center justify-between p-4 bg-slate-50 border-b">
     <h3 class="text-sm font-bold text-slate-900 m-0">Notifications</h3>
-    <button mat-button color="primary" class="text-xs uppercase font-extrabold">Mark all as read</button>
+    <button mat-button color="primary" type="button" class="text-xs uppercase font-extrabold" (click)="markAllAsRead()">
+      Mark all as read
+    </button>
   </div>
 
   <div class="notif-scroll-area custom-scrollbar max-h-[400px] overflow-y-auto min-w-[320px]">
@@ -41,6 +49,8 @@
   </div>
 
   <div class="notif-footer p-2 text-center border-t">
-    <button mat-button class="w-full text-xs font-bold text-slate-500">View all notifications</button>
+    <button mat-button type="button" routerLink="/notifications" class="w-full text-xs font-bold text-slate-500">
+      View all notifications
+    </button>
   </div>
 </mat-menu>

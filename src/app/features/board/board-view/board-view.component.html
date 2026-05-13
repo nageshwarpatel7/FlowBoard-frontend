@@ -85,11 +85,14 @@
           
           <div class="list-column glass">
             <!-- List header -->
-            <div class="list-header" cdkDragHandle>
+            <div class="list-header">
               <div class="list-header-left">
-                <span class="list-color-dot" *ngIf="list.color" [style.background]="list.color"></span>
-                <span class="list-name">{{ list.name }}</span>
-                <span class="list-count">{{ getCards(list.id).length }}</span>
+                <mat-icon class="drag-grip" cdkDragHandle>drag_indicator</mat-icon>
+                <div class="list-header-titles">
+                  <span class="list-color-dot" *ngIf="list.color" [style.background]="list.color"></span>
+                  <span class="list-name">{{ list.name }}</span>
+                  <span class="list-count">{{ getCards(list.id).length }}</span>
+                </div>
               </div>
 
               <div style="display: flex;">

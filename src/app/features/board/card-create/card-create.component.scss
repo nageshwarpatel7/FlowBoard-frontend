@@ -1,9 +1,10 @@
 .card-create-form {
-  background: #fff;
+  background: var(--bg-elevated);
   border-radius: var(--radius-sm);
-  padding: 8px;
-  margin: 0 8px 8px;
+  padding: 10px;
+  margin: 0 0 8px;
   box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
 }
 
 .card-input {
@@ -14,15 +15,18 @@
   font-size: 13px;
   color: var(--text-primary);
   line-height: 1.5;
-  padding: 4px 6px;
-  font-family: inherit;
+  padding: 6px 8px;
+  font-family: 'Exo 2', sans-serif;
+  background: transparent;
 
-  &::placeholder { color: var(--text-muted); }
+  &::placeholder {
+    color: var(--text-disabled);
+  }
 }
 
 .card-create-actions {
   display: flex;
   align-items: center;
-  gap: 4px;
-  margin-top: 6px;
+  gap: 6px;
+  margin-top: 8px;
 }

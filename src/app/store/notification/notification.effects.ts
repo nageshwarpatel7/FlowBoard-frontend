@@ -34,4 +34,16 @@ export class NotificationEffects {
     ),
     { dispatch: false }
   );
+
+  markAllAsRead$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(NotificationActions.markAllAsRead),
+      switchMap(() =>
+        this.notificationService.markAllAsRead().pipe(
+          map(() => NotificationActions.loadNotifications()),
+          catchError(() => of({ type: '[Notification] Mark All As Read Failure' }))
+        )
+      )
+    )
+  );
 }

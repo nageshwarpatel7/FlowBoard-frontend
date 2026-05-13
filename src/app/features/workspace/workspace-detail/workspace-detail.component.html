@@ -155,8 +155,14 @@
 
     <!-- MEMBERS TAB -->
     <ng-container *ngIf="!loading && activeTab === 'members'">
-      
+
       <div class="members-layout">
+        <input type="checkbox" id="ws-members-drawer-toggle" class="ws-drawer-toggle" />
+        <label for="ws-members-drawer-toggle" class="ws-drawer-backdrop" aria-hidden="true"></label>
+        <label for="ws-members-drawer-toggle" class="ws-drawer-hamburger" aria-label="Open sidebar menu">
+          <mat-icon>menu</mat-icon>
+        </label>
+
         <div class="members-sidebar">
           <div class="section-card glass">
             <h3>Invite Member</h3>

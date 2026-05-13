@@ -6,21 +6,22 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { PaymentService, Plan, Subscription } from '../../../core/services/payment.service';
+import { PaymentService, Plan } from '../../../core/services/payment.service';
 
 @Component({
   selector: 'app-pricing',
   standalone: true,
   imports: [CommonModule, RouterModule, MatButtonModule, MatIconModule,
             MatSnackBarModule, MatDividerModule, MatProgressSpinnerModule],
-  templateUrl: './pricing.component.html'
+  templateUrl: './pricing.component.html',
+  styleUrl: './pricing.component.scss'
 })
 export class PricingComponent implements OnInit {
   private paymentService = inject(PaymentService);
   private snack          = inject(MatSnackBar);
+  readonly subscription = this.paymentService.currentPlan;
 
   plans       = signal<Plan[]>([]);
-  subscription = signal<Subscription | null>(null);
   billing     = signal<'MONTHLY' | 'YEARLY'>('MONTHLY');
   loading     = signal(true);
   purchasing  = signal(false);
@@ -31,7 +32,7 @@ export class PricingComponent implements OnInit {
       error: () => this.loading.set(false)
     });
     this.paymentService.getSubscription().subscribe({
-      next: s => this.subscription.set(s), error: () => {}
+      error: () => {}
     });
   }
 
@@ -65,8 +66,7 @@ export class PricingComponent implements OnInit {
     if (!confirm('Cancel subscription? You keep access until period ends.')) return;
     this.paymentService.cancelSubscription().subscribe({
       next: () => {
-        const s = this.subscription();
-        if (s) this.subscription.set({ ...s, status: 'CANCELLED' });
+        this.paymentService.getSubscription().subscribe();
         this.snack.open('Subscription cancelled', 'Close', { duration: 3000 });
       },
       error: () => this.snack.open('Failed to cancel', 'Close', { duration: 3000 })

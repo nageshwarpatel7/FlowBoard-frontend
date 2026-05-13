@@ -45,6 +45,10 @@ export class NotificationCenterComponent implements OnInit {
     }
   }
 
+  markAllAsRead(): void {
+    this.store.dispatch(NotificationActions.markAllAsRead());
+  }
+
   getTypeIcon(type: string): string {
     switch(type) {
       case 'ASSIGNMENT': return 'person_add';
