@@ -1,0 +1,47 @@
+
+> flowboard-ui@0.0.0 start
+> ng serve --host 127.0.0.1 --port 4200
+
+[1m[33mComponent HMR has been enabled, see https://angular.dev/hmr for more info.[39m[22m
+[33m>[39m Building...
+[32m√[39m Building...
+[1mInitial chunk files[22m[2m | [22m[1mNames[22m                      [2m | [22m [1mRaw size[22m
+[32mpolyfills.js[39m       [2m | [22m[2mpolyfills[22m                  [2m | [22m [36m89.77 kB[39m[2m | [22m
+[32mstyles.css[39m         [2m | [22m[2mstyles[22m                     [2m | [22m [36m46.06 kB[39m[2m | [22m
+[32mmain.js[39m            [2m | [22m[2mmain[22m                       [2m | [22m [36m39.63 kB[39m[2m | [22m
+[32mchunk-RU3O2V3U.js[39m  [2m | [22m[2m-[22m                          [2m | [22m  [36m8.77 kB[39m[2m | [22m
+[32mchunk-27YJQIR6.js[39m  [2m | [22m[2m-[22m                          [2m | [22m  [36m3.50 kB[39m[2m | [22m
+[32mchunk-A5VU3GOF.js[39m  [2m | [22m[2m-[22m                          [2m | [22m  [36m2.72 kB[39m[2m | [22m
+[32mchunk-NFIO645J.js[39m  [2m | [22m[2m-[22m                          [2m | [22m  [36m2.56 kB[39m[2m | [22m
+[32mchunk-3UGNW6MZ.js[39m  [2m | [22m[2m-[22m                          [2m | [22m  [36m2.21 kB[39m[2m | [22m
+[32mchunk-GOMI4DH3.js[39m  [2m | [22m[2m-[22m                          [2m | [22m  [36m1.37 kB[39m[2m | [22m
+[32mchunk-5COBPLQI.js[39m  [2m | [22m[2m-[22m                          [2m | [22m  [36m1.11 kB[39m[2m | [22m
+[32mchunk-FWUW3LJP.js[39m  [2m | [22m[2m-[22m                          [2m | [22m[36m877 bytes[39m[2m | [22m
+[32mchunk-XVDR5SGJ.js[39m  [2m | [22m[2m-[22m                          [2m | [22m[36m190 bytes[39m[2m | [22m
+
+[1m [22m                  [2m | [22m[1mInitial total[22m              [2m | [22m[1m198.78 kB[22m
+
+[1mLazy chunk files[22m   [2m | [22m[1mNames[22m                      [2m | [22m [1mRaw size[22m
+[32mchunk-FRI3PKYW.js[39m  [2m | [22m[2mboard-view-component[22m       [2m | [22m[36m204.94 kB[39m[2m | [22m
+[32mchunk-RY4UBKY5.js[39m  [2m | [22m[2madmin-panel-component[22m      [2m | [22m[36m128.55 kB[39m[2m | [22m
+[32mchunk-EPZDS4Y2.js[39m  [2m | [22m[2mworkspace-detail-component[22m [2m | [22m [36m93.89 kB[39m[2m | [22m
+[32mchunk-5GTFJ5AX.js[39m  [2m | [22m[2mmain-layout-component[22m      [2m | [22m [36m71.07 kB[39m[2m | [22m
+[32mchunk-KZYCNTL2.js[39m  [2m | [22m[2mdashboard-component[22m        [2m | [22m [36m44.50 kB[39m[2m | [22m
+[32mchunk-DJOWC6JX.js[39m  [2m | [22m[2mprofile-view-component[22m     [2m | [22m [36m40.49 kB[39m[2m | [22m
+[32mchunk-MLPZBB75.js[39m  [2m | [22m[2mpricing-component[22m          [2m | [22m [36m33.36 kB[39m[2m | [22m
+[32mchunk-DYPI5Q43.js[39m  [2m | [22m[2mreset-password-component[22m   [2m | [22m [36m23.25 kB[39m[2m | [22m
+[32mchunk-IH7MOGAA.js[39m  [2m | [22m[2mverify-email-component[22m     [2m | [22m [36m22.70 kB[39m[2m | [22m
+[32mchunk-3C4DEZ6D.js[39m  [2m | [22m[2mregister-component[22m         [2m | [22m [36m21.00 kB[39m[2m | [22m
+[32mchunk-7RMXOX4G.js[39m  [2m | [22m[2mlanding-component[22m          [2m | [22m [36m20.86 kB[39m[2m | [22m
+[32mchunk-TU3WPFZN.js[39m  [2m | [22m[2mlogin-component[22m            [2m | [22m [36m20.64 kB[39m[2m | [22m
+[32mchunk-EMUDZ45F.js[39m  [2m | [22m[2mnotification-page-component[22m[2m | [22m [36m19.42 kB[39m[2m | [22m
+[32mchunk-LTX7GQLB.js[39m  [2m | [22m[2mforgot-password-component[22m  [2m | [22m [36m19.05 kB[39m[2m | [22m
+[32mchunk-EVELLVVR.js[39m  [2m | [22m[2m-[22m                          [2m | [22m [36m11.10 kB[39m[2m | [22m
+[2m...and 6 more lazy chunks files. Use "--verbose" to show all the files.[22m
+
+Application bundle generation complete. [10.916 seconds]
+
+Watch mode enabled. Watching for file changes...
+NOTE: Raw file sizes do not reflect development server per-request transformations.
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://127.0.0.1:[1m4200[22m/[39m
+[2m[32m  ➜[39m[22m[2m  press [22m[1mh + enter[22m[2m to show help[22m

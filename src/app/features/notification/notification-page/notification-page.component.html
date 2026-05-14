@@ -1,0 +1,55 @@
+<section class="notifications-page">
+  <header class="page-header">
+    <div>
+      <h1>Notifications</h1>
+      <p>{{ unreadCount$ | async }} unread notifications</p>
+    </div>
+    <button mat-button color="primary" type="button" (click)="markAllAsRead()">
+      Mark all as read
+    </button>
+  </header>
+
+  <mat-divider></mat-divider>
+
+  @if (loading$ | async) {
+    <div class="state">
+      <mat-spinner diameter="40"></mat-spinner>
+      <p>Loading notifications...</p>
+    </div>
+  } @else {
+    @if ((notifications$ | async); as notifications) {
+      @if (notifications.length === 0) {
+        <div class="state">
+          <mat-icon>notifications_none</mat-icon>
+          <h2>All caught up</h2>
+          <p>No notifications yet.</p>
+        </div>
+      } @else {
+        <div class="notification-list">
+          @for (notification of notifications; track notification.id) {
+            <button
+              type="button"
+              class="notification-row"
+              [class.unread]="!notification.isRead"
+              (click)="markAsRead(notification)"
+            >
+              <span class="icon-box" [ngClass]="notification.type.toLowerCase()">
+                <mat-icon>{{ getTypeIcon(notification.type) }}</mat-icon>
+              </span>
+              <span class="content">
+                <span class="row-top">
+                  <strong>{{ notification.title }}</strong>
+                  <time>{{ notification.createdAt | date:'MMM d, h:mm a' }}</time>
+                </span>
+                <span class="message">{{ notification.message }}</span>
+              </span>
+              @if (!notification.isRead) {
+                <span class="unread-dot" aria-label="Unread notification"></span>
+              }
+            </button>
+          }
+        </div>
+      }
+    }
+  }
+</section>

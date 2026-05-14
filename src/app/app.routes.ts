@@ -19,7 +19,7 @@ export const routes: Routes = [
       { path: 'dashboard', loadComponent: () => import('./features/dashboard/dashboard/dashboard.component').then(m => m.DashboardComponent) },
       { path: 'workspace/:id', loadComponent: () => import('./features/workspace/workspace-detail/workspace-detail.component').then(m => m.WorkspaceDetailComponent) },
       { path: 'board/:id', loadComponent: () => import('./features/board/board-view/board-view.component').then(m => m.BoardViewComponent) },
-      { path: 'notifications', loadComponent: () => import('./features/notification/notification-center/notification-center.component').then(m => m.NotificationCenterComponent) },
+      { path: 'notifications', loadComponent: () => import('./features/notification/notification-page/notification-page.component').then(m => m.NotificationPageComponent) },
       { path: 'profile', loadComponent: () => import('./features/profile/profile-view/profile-view.component').then(m => m.ProfileViewComponent) },
       { path: 'admin', canActivate: [adminGuard], loadComponent: () => import('./features/admin/admin-panel/admin-panel.component').then(m => m.AdminPanelComponent) },
       { path: 'pricing', loadComponent: () => import('./features/payment/pricing/pricing.component').then(m => m.PricingComponent) },

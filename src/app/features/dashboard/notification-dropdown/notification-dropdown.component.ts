@@ -4,6 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Router } from '@angular/router';
 import { NotificationService } from '../../../core/services/notification.service';
 import { Notification } from '../../../core/models/notification.model';
 
@@ -20,6 +21,7 @@ import { Notification } from '../../../core/models/notification.model';
 export class NotificationDropdownComponent implements OnInit {
 
   private notifService = inject(NotificationService);
+  private router = inject(Router);
 
   @Output() closed = new EventEmitter<void>();
 
@@ -61,6 +63,11 @@ export class NotificationDropdownComponent implements OnInit {
         this.notifications.forEach(n => n.isRead = true);
       }
     });
+  }
+
+  viewAll(): void {
+    this.close();
+    this.router.navigate(['/notifications']);
   }
 
   getIcon(type: string): string {
