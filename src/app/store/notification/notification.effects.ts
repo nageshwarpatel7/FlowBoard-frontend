@@ -27,12 +27,11 @@ export class NotificationEffects {
       ofType(NotificationActions.markAsRead),
       switchMap(({ id }) =>
         this.notificationService.markAsRead(id).pipe(
-          map(() => ({ type: '[Notification] Mark As Read Success' })), // Optional success action
+          map(() => NotificationActions.loadNotifications()),
           catchError(() => of({ type: '[Notification] Mark As Read Failure' }))
         )
       )
-    ),
-    { dispatch: false }
+    )
   );
 
   markAllAsRead$ = createEffect(() =>

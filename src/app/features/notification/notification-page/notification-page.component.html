@@ -27,8 +27,9 @@
       } @else {
         <div class="notification-list">
           @for (notification of notifications; track notification.id) {
-            <button
-              type="button"
+            <div
+              role="button"
+              tabindex="0"
               class="notification-row"
               [class.unread]="!notification.isRead"
               (click)="markAsRead(notification)"
@@ -42,11 +43,23 @@
                   <time>{{ notification.createdAt | date:'MMM d, h:mm a' }}</time>
                 </span>
                 <span class="message">{{ notification.message }}</span>
+                @if (getInviteToken(notification); as token) {
+                  <a
+                    mat-flat-button
+                    color="primary"
+                    class="accept-invite-btn"
+                    [routerLink]="['/invite/accept']"
+                    [queryParams]="{ token: token }"
+                    (click)="$event.stopPropagation()"
+                  >
+                    Accept invite
+                  </a>
+                }
               </span>
               @if (!notification.isRead) {
                 <span class="unread-dot" aria-label="Unread notification"></span>
               }
-            </button>
+            </div>
           }
         </div>
       }

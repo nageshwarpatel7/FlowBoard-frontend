@@ -14,7 +14,7 @@ export const notificationReducer = createReducer(
   }),
   on(NotificationActions.markAsRead, (state, { id }) => {
     const notification = state.entities[id];
-    const unreadCount = state.unreadCount - (notification && !notification.isRead ? 1 : 0);
+    const unreadCount = Math.max(0, state.unreadCount - (notification && !notification.isRead ? 1 : 0));
     return notificationAdapter.updateOne({ id, changes: { isRead: true } }, { ...state, unreadCount });
   }),
   on(NotificationActions.markAllAsRead, (state) => {

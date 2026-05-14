@@ -73,7 +73,19 @@
       background: var(--bg-primary);
       color: var(--text-secondary);
     }
+
+    &.invite {
+      background: rgba(76, 175, 80, 0.18);
+      color: var(--success);
+    }
   }
+}
+
+.accept-invite-btn {
+  min-height: 30px;
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 30px;
 }
 
 .custom-scrollbar {

@@ -21,7 +21,7 @@ import { Notification } from '../../../core/models/notification.model';
 export class NotificationDropdownComponent implements OnInit {
 
   private notifService = inject(NotificationService);
-  private router = inject(Router);
+  router = inject(Router);
 
   @Output() closed = new EventEmitter<void>();
 
@@ -76,7 +76,18 @@ export class NotificationDropdownComponent implements OnInit {
       case 'MENTION':    return 'alternate_email';
       case 'DUE_DATE':   return 'schedule';
       case 'OVERDUE':    return 'priority_high';
+      case 'INVITE':     return 'group_add';
       default:           return 'notifications';
+    }
+  }
+
+  getInviteToken(notification: Notification): string | null {
+    if (notification.type !== 'INVITE' || !notification.deepLinkUrl) return null;
+    try {
+      const url = new URL(notification.deepLinkUrl, window.location.origin);
+      return url.searchParams.get('token');
+    } catch {
+      return null;
     }
   }
 

@@ -42,6 +42,18 @@
               <span class="text-[10px] text-slate-400">{{ notif.createdAt | date:'shortTime' }}</span>
             </div>
             <p class="text-[12px] text-slate-600 leading-tight m-0 line-clamp-2">{{ notif.message }}</p>
+            @if (getInviteToken(notif); as token) {
+              <a
+                mat-flat-button
+                color="primary"
+                class="accept-invite-btn"
+                [routerLink]="['/invite/accept']"
+                [queryParams]="{ token: token }"
+                (click)="$event.stopPropagation()"
+              >
+                Accept invite
+              </a>
+            }
           </div>
         </div>
       }

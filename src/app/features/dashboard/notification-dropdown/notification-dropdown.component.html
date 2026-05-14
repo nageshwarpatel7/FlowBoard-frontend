@@ -29,6 +29,16 @@
         <div class="notif-content">
           <p class="notif-title">{{ n.title }}</p>
           <p class="notif-message">{{ n.message }}</p>
+          <button
+            *ngIf="getInviteToken(n) as token"
+            mat-flat-button
+            color="primary"
+            type="button"
+            class="accept-invite-btn"
+            (click)="$event.stopPropagation(); close(); router.navigate(['/invite/accept'], { queryParams: { token } })"
+          >
+            Accept invite
+          </button>
           <span class="notif-time">{{ n.createdAt | date:'MMM d, h:mm a' }}</span>
         </div>
         <div *ngIf="!n.isRead" class="unread-dot"></div>

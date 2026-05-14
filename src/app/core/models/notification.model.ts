@@ -1,6 +1,6 @@
 export type NotificationType =
   | 'ASSIGNMENT' | 'MENTION' | 'DUE_DATE'
-  | 'COMMENT' | 'MOVE' | 'BROADCAST' | 'OVERDUE';
+  | 'COMMENT' | 'MOVE' | 'BROADCAST' | 'OVERDUE' | 'INVITE';
 
 export interface Notification {
   id: number;
@@ -13,6 +13,7 @@ export interface Notification {
   relatedType: string | null;
   deepLinkUrl: string | null;
   isRead: boolean;
+  read?: boolean;
   createdAt: string;
   readAt: string | null;
 }

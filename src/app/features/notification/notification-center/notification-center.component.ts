@@ -55,7 +55,18 @@ export class NotificationCenterComponent implements OnInit {
       case 'DUE_DATE': return 'event';
       case 'OVERDUE': return 'error';
       case 'COMMENT': return 'comment';
+      case 'INVITE': return 'group_add';
       default: return 'notifications';
+    }
+  }
+
+  getInviteToken(notification: Notification): string | null {
+    if (notification.type !== 'INVITE' || !notification.deepLinkUrl) return null;
+    try {
+      const url = new URL(notification.deepLinkUrl, window.location.origin);
+      return url.searchParams.get('token');
+    } catch {
+      return null;
     }
   }
 }

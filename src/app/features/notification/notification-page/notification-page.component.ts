@@ -1,5 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,6 +17,7 @@ import * as NotificationSelectors from '../../../store/notification/notification
   standalone: true,
   imports: [
     CommonModule,
+    RouterModule,
     MatButtonModule,
     MatDividerModule,
     MatIconModule,
@@ -52,7 +54,18 @@ export class NotificationPageComponent implements OnInit {
       case 'OVERDUE': return 'error';
       case 'COMMENT': return 'comment';
       case 'MENTION': return 'alternate_email';
+      case 'INVITE': return 'group_add';
       default: return 'notifications';
+    }
+  }
+
+  getInviteToken(notification: Notification): string | null {
+    if (notification.type !== 'INVITE' || !notification.deepLinkUrl) return null;
+    try {
+      const url = new URL(notification.deepLinkUrl, window.location.origin);
+      return url.searchParams.get('token');
+    } catch {
+      return null;
     }
   }
 }

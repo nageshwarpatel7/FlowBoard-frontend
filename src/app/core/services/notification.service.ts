@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Notification } from '../models/notification.model';
 
@@ -15,7 +15,10 @@ export class NotificationService {
   unreadCount$ = this._unreadCount.asObservable();
 
   getNotifications(): Observable<Notification[]> {
-    return this.http.get<Notification[]>(this.base);
+    return this.http.get<Notification[]>(this.base).pipe(
+      map(notifications => notifications.map(n => this.normalizeNotification(n))),
+      tap(notifications => this._unreadCount.next(notifications.filter(n => !n.isRead).length))
+    );
   }
 
   // Legacy alias for getNotifications
@@ -24,7 +27,10 @@ export class NotificationService {
   }
 
   getUnread(): Observable<Notification[]> {
-    return this.http.get<Notification[]>(`${this.base}/unread`);
+    return this.http.get<Notification[]>(`${this.base}/unread`).pipe(
+      map(notifications => notifications.map(n => this.normalizeNotification(n))),
+      tap(notifications => this._unreadCount.next(notifications.length))
+    );
   }
 
   refreshUnreadCount(): void {
@@ -37,6 +43,9 @@ export class NotificationService {
   markAsRead(id: number): Observable<Notification> {
     return this.http.put<Notification>(
       `${this.base}/${id}/read`, {}
+    ).pipe(
+      map(notification => this.normalizeNotification(notification)),
+      tap(() => this.refreshUnreadCount())
     );
   }
 
@@ -44,6 +53,8 @@ export class NotificationService {
     return this.http.put(
       `${this.base}/read/all`, {},
       { responseType: 'text' }
+    ).pipe(
+      tap(() => this._unreadCount.next(0))
     );
   }
 
@@ -56,5 +67,10 @@ export class NotificationService {
   deleteRead(): Observable<string> {
     return this.http.delete(`${this.base}/read/all`,
       { responseType: 'text' });
+  }
+
+  private normalizeNotification(notification: Notification): Notification {
+    const read = notification.isRead ?? notification.read ?? false;
+    return { ...notification, isRead: read };
   }
 }

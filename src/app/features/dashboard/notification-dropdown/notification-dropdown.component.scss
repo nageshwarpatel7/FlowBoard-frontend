@@ -116,6 +116,11 @@
       color: var(--accent-blue);
     }
 
+    &.invite {
+      background: rgba(76, 175, 80, 0.2);
+      color: var(--success);
+    }
+
     &.notifications {
       background: var(--bg-primary);
       color: var(--text-secondary);
@@ -143,6 +148,13 @@
       font-size: 11px;
       color: var(--text-disabled);
       font-weight: 500;
+    }
+
+    .accept-invite-btn {
+      min-height: 30px;
+      margin: 4px 0 8px;
+      font-size: 12px;
+      line-height: 30px;
     }
   }
 
