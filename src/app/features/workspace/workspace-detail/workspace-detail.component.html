@@ -231,7 +231,7 @@
                    <mat-icon>mail</mat-icon>
                 </div>
                 <div class="member-info">
-                  <p class="member-name">{{ invite.email }}</p>
+                  <p class="member-name">{{ invite.inviteeEmail || invite.email }}</p>
                   <span class="member-role">Invited as {{ invite.role }}</span>
                 </div>
                 <button mat-button color="warn" (click)="revokeInvitation(invite.id)" class="revoke-btn">

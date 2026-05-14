@@ -1,7 +1,8 @@
 export interface WorkspaceInvitation {
   id: number;
   workspaceId: number;
-  email: string;
+  email?: string;
+  inviteeEmail?: string;
   role: 'ADMIN' | 'MEMBER';
   token: string;
   status: 'PENDING' | 'ACCEPTED' | 'REVOKED' | 'EXPIRED';

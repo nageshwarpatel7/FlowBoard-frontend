@@ -84,7 +84,7 @@ export class WorkspaceService {
 
   revokeInvitation(workspaceId: number, invitationId: number): Observable<string> {
     return this.http.delete(
-      `${this.base}/${workspaceId}/invite/${invitationId}`,
+      `${this.base}/${workspaceId}/invitations/${invitationId}`,
       { responseType: 'text' }
     );
   }
