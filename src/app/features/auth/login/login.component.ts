@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../../environments/environment';
 import {
   ReactiveFormsModule, FormBuilder,
   FormGroup, Validators
@@ -38,6 +39,8 @@ export class LoginComponent {
   loading       = false;
   hidePassword  = true;
   errorMessage  = '';
+  
+  googleAuthUrl = environment.apiUrl.replace('/api/v1', '/oauth2/authorization/google');
 
   get email()    { return this.form.get('email')!; }
   get password() { return this.form.get('password')!; }
