@@ -1,18 +1,17 @@
 .card-modal-container {
   max-height: 90vh;
   overflow-y: auto;
-  scrollbar-gutter: stable;
 
   &::-webkit-scrollbar {
     width: 6px;
   }
 
   &::-webkit-scrollbar-track {
-    background: var(--bg-primary);
+    background: transparent;
   }
 
   &::-webkit-scrollbar-thumb {
-    background: var(--accent-blue);
+    background: rgba(0, 0, 0, 0.15);
     border-radius: 6px;
   }
 }

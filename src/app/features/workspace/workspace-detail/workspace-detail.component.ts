@@ -155,7 +155,7 @@ export class WorkspaceDetailComponent implements OnInit {
         board.background = updated.background;
         this.snack.open('Board theme updated', 'Close', { duration: 2000 });
       },
-      error: () => this.snack.open('Failed to update board theme', 'Close', { duration: 3000 })
+      error: (err) => this.snack.open(err.error?.message || 'Failed to update board theme', 'Close', { duration: 3000 })
     });
   }
 

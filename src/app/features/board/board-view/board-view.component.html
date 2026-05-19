@@ -32,10 +32,17 @@
 
     <div class="toolbar-right">
       <div class="member-stack">
-        <div class="m-dot">U</div>
-        <div class="m-dot plus">+</div>
+        <div class="m-dot" *ngFor="let m of boardMembers | slice:0:3"
+             [title]="m.displayName || 'User #' + m.userId"
+             [style.background]="m.avatarUrl ? 'url(' + m.avatarUrl + ') center/cover' : 'var(--bg-elevated)'"
+             [style.color]="m.avatarUrl ? 'transparent' : 'var(--text-secondary)'">
+          {{ m.avatarUrl ? '' : (m.displayName ? m.displayName[0] : 'U') }}
+        </div>
+        <div class="m-dot plus" *ngIf="boardMembers.length > 3">
+          +{{ boardMembers.length - 3 }}
+        </div>
       </div>
-      <button mat-flat-button class="share-btn">
+      <button mat-flat-button class="share-btn" (click)="shareBoard()">
          <mat-icon>person_add</mat-icon> Share
       </button>
       <button mat-icon-button [matMenuTriggerFor]="boardActionsMenu" class="more-btn">
@@ -44,7 +51,7 @@
 
         <mat-menu #boardActionsMenu="matMenu" class="modern-menu">
           <button mat-menu-item (click)="showAnalytics = true"><mat-icon>analytics</mat-icon> Analytics</button>
-          <button mat-menu-item (click)="showArchive = true"><mat-icon>archive</mat-icon> Archived Items</button>
+          <button mat-menu-item (click)="openArchiveManager()"><mat-icon>archive</mat-icon> Archived Items</button>
           <mat-divider></mat-divider>
           <button mat-menu-item class="delete-item" (click)="deleteBoard()">
             <mat-icon>delete</mat-icon> Delete Board
@@ -238,7 +245,7 @@
   <!-- Analytics Overlay -->
   <div *ngIf="showAnalytics && board" class="card-detail-overlay" (click)="showAnalytics = false">
     <div class="card-detail-panel" (click)="$event.stopPropagation()">
-      <app-board-analytics [board]="board" [allCards]="getAllCards()"></app-board-analytics>
+      <app-board-analytics [board]="board" [allCards]="allCards"></app-board-analytics>
     </div>
   </div>
 
@@ -246,8 +253,8 @@
   <div *ngIf="showArchive" class="card-detail-overlay" (click)="showArchive = false">
     <div class="card-detail-panel side-panel" (click)="$event.stopPropagation()">
       <app-archive-manager
-        [archivedCards]="getArchivedCards()"
-        [archivedLists]="getArchivedLists()"
+        [archivedCards]="archivedCards"
+        [archivedLists]="archivedLists"
         (restoreCard)="restoreCard($event)"
         (restoreList)="restoreList($event)"
         (closed)="showArchive = false">

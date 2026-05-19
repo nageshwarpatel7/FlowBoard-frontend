@@ -72,7 +72,7 @@ export class BoardViewComponent implements OnInit {
   showAnalytics = false;
   showArchive   = false;
 
-  boardMembers: Array<{ userId: number; displayName?: string }> = [];
+  boardMembers: Array<{ userId: number; displayName?: string; avatarUrl?: string }> = [];
 
   listForm = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(1)]]
@@ -231,18 +231,28 @@ export class BoardViewComponent implements OnInit {
     window.history.back();
   }
 
+  shareBoard(): void {
+    this.snack.open('Board sharing coming soon!', 'Close', { duration: 3000 });
+  }
+
   // --- Advanced Analytics & Archive ---
 
-  getAllCards(): Card[] {
-    return this.allCards;
-  }
+  archivedCards: Card[] = [];
+  archivedLists: TaskList[] = [];
 
-  getArchivedCards(): Card[] {
-    return this.getAllCards().filter(c => c.isArchived);
-  }
-
-  getArchivedLists(): TaskList[] {
-    return this.lists.filter(l => l.isArchived);
+  openArchiveManager(): void {
+    if (!this.board) return;
+    this.showArchive = true;
+    
+    this.cardService.getArchivedByBoard(this.board.id).subscribe({
+      next: cards => this.archivedCards = cards,
+      error: () => this.snack.open('Failed to load archived cards', 'Close', { duration: 3000 })
+    });
+    
+    this.listService.getArchived(this.board.id).subscribe({
+      next: lists => this.archivedLists = lists,
+      error: () => this.snack.open('Failed to load archived lists', 'Close', { duration: 3000 })
+    });
   }
 
   restoreCard(card: Card): void {
@@ -255,6 +265,8 @@ export class BoardViewComponent implements OnInit {
       next: () => {
         const updated = { ...card, isArchived: false };
         this.store.dispatch(BoardActions.updateCard({ card: updated }));
+        // Remove from local archived list
+        this.archivedCards = this.archivedCards.filter(c => c.id !== card.id);
         this.snack.open('Card restored!', 'Close', { duration: 3000 });
       }
     });
