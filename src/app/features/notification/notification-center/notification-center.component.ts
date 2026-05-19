@@ -45,10 +45,14 @@ export class NotificationCenterComponent implements OnInit {
     }
   }
 
+  onAcceptInviteClick(event: Event, n: Notification): void {
+    event.stopPropagation();
+    this.markAsRead(n);
+  }
+
   markAllAsRead(): void {
     this.store.dispatch(NotificationActions.markAllAsRead());
   }
-
   getTypeIcon(type: string): string {
     switch(type) {
       case 'ASSIGNMENT': return 'person_add';

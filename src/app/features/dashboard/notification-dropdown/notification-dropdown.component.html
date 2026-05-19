@@ -30,12 +30,12 @@
           <p class="notif-title">{{ n.title }}</p>
           <p class="notif-message">{{ n.message }}</p>
           <button
-            *ngIf="getInviteToken(n) as token"
+            *ngIf="!n.isRead && getInviteToken(n) as token"
             mat-flat-button
             color="primary"
             type="button"
             class="accept-invite-btn"
-            (click)="$event.stopPropagation(); close(); router.navigate(['/invite/accept'], { queryParams: { token } })"
+            (click)="onAcceptInviteClick($event, n, token)"
           >
             Accept invite
           </button>

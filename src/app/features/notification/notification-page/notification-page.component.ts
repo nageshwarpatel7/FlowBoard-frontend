@@ -43,6 +43,11 @@ export class NotificationPageComponent implements OnInit {
     }
   }
 
+  onAcceptInviteClick(event: Event, notification: Notification): void {
+    event.stopPropagation();
+    this.markAsRead(notification);
+  }
+
   markAllAsRead(): void {
     this.store.dispatch(NotificationActions.markAllAsRead());
   }

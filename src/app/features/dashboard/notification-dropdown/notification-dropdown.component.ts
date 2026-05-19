@@ -41,6 +41,8 @@ export class NotificationDropdownComponent implements OnInit {
     this.notifService.getAll().subscribe({
       next: (n: Notification[]) => {
         this.notifications = n.slice(0, 10); // Show last 10
+
+
         this.loading = false;
       },
       error: () => { this.loading = false; }
@@ -55,6 +57,13 @@ export class NotificationDropdownComponent implements OnInit {
         if (index !== -1) this.notifications[index] = updated;
       }
     });
+  }
+
+  onAcceptInviteClick(event: Event, n: Notification, token: string): void {
+    event.stopPropagation();
+    this.markAsRead(n);
+    this.close();
+    this.router.navigate(['/invite/accept'], { queryParams: { token } });
   }
 
   markAllAsRead(): void {

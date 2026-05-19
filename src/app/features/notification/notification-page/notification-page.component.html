@@ -43,14 +43,14 @@
                   <time>{{ notification.createdAt | date:'MMM d, h:mm a' }}</time>
                 </span>
                 <span class="message">{{ notification.message }}</span>
-                @if (getInviteToken(notification); as token) {
+                @if (!notification.isRead && getInviteToken(notification); as token) {
                   <a
                     mat-flat-button
                     color="primary"
                     class="accept-invite-btn"
                     [routerLink]="['/invite/accept']"
                     [queryParams]="{ token: token }"
-                    (click)="$event.stopPropagation()"
+                    (click)="onAcceptInviteClick($event, notification)"
                   >
                     Accept invite
                   </a>
